@@ -24,3 +24,4 @@ portable_tools/
 .DS_Store
 Thumbs.db
 .vscode/
+*.zip
