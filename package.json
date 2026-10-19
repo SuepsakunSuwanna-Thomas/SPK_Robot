@@ -1,0 +1,23 @@
+{
+  "name": "rp2350-ide",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "adm-zip": "^0.5.17",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "express-rate-limit": "^7.1.5",
+    "fs-extra": "^11.3.4",
+    "helmet": "^7.1.0",
+    "multer": "^2.0.0",
+    "winston": "^3.11.0"
+  }
+}

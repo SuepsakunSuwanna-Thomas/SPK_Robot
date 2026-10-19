@@ -1,0 +1,26 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Server & Application Logs
+logs/
+*.log
+
+# Build artifacts & cache
+arduino_CLI/build_cache/
+pio_template/.pio/
+scratch/
+arduino_CLI/-o.d
+-o.d
+
+# Large compiler toolchain & archives (>2.5GB binary files)
+# แนะนำให้ส่งโฟลเดอร์ portable_tools ผ่าน Google Drive หรือ Flash Drive
+arduino_CLI/portable_tools/
+portable_tools/
+
+# OS and Editor metadata
+.DS_Store
+Thumbs.db
+.vscode/

@@ -1,0 +1,18 @@
+# build.ninja - GENERATED FOR ULTIMATE SPEED
+compiler = D:/arduino_CLI/data/packages/rp2040/tools/pqt-gcc/4.1.0-1aec55e/bin/arm-none-eabi-g++.exe
+builddir = D:/arduino_CLI_END/build_cache/fast
+libroot  = D:/arduino_CLI/data/packages/rp2040/hardware/rp2040/5.5.1
+
+flags = -c -Os -mcpu=cortex-m33 -mthumb -march=armv8-m.main+fp+dsp -mfloat-abi=softfp -mcmse -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti -std=gnu++17 -DF_CPU=150000000L -DARDUINO=10607 -DARDUINO_ARCH_RP2040 -DUSBD_PID=0x000f -DUSBD_VID=0x2e8a -DPICO_RP2350=1 -iprefix$libroot/
+
+includes = -ID:/arduino_CLI_END/build_cache/fast/core -I$libroot/cores/rp2040 -I$libroot/variants/rpipico2 -I$libroot/include -ID:/arduino_CLI_END/libraries/puppybot6 -I$libroot/libraries/Servo/src -ID:/arduino_CLI_END/libraries/Adafruit_GFX_Library -ID:/arduino_CLI_END/libraries/Adafruit_BusIO -ID:/arduino_CLI_END/libraries/Adafruit_ST7735_Library -ID:/arduino_CLI_END/libraries/ICM-20948/src -ID:/arduino_CLI_END/libraries/Adafruit_MCP3008 -ID:/arduino_CLI_END/libraries/rp2040-encoder-library/src -I$libroot/libraries/SPI/src -I$libroot/libraries/Wire/src -I$libroot/libraries/EEPROM/src -I$libroot/cores/rp2040/lwip/src/include -I$libroot/pico-sdk/src/rp2_common/pico_lwip/include @$libroot/lib/rp2350/platform_inc.txt @$libroot/lib/core_inc.txt
+
+rule compile
+  command = $compiler $flags $includes $in -o $out
+  description = Compiling $in
+
+rule link
+  command = $compiler -Wl,--gc-sections -mcpu=cortex-m33 -mthumb -march=armv8-m.main+fp+dsp -mfloat-abi=softfp -mcmse -L$libroot/lib/rp2350 -T$builddir/memmap_default.ld -o $out $in -lpico -lm -lstdc++
+  description = Linking $out
+
+build $builddir/sketch/main_B.ino.cpp.o: compile $builddir/sketch/main_B.ino.cpp

@@ -1,0 +1,3539 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RP2350 Pro IDE - Modern Edition</title>
+    <link rel="icon" href="data:,">
+
+    <!-- FontAwesome 6 (Professional Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Modern Typography: Prompt for beautiful Thai UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Blockly & Extensions -->
+    <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/msg/en.js"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Ace Editor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ext-beautify.js"></script>
+
+    <style>
+        :root {
+            /* 🌌 Vibrant Modern Palette - Base Day */
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --accent-color: #06b6d4;
+            --primary-glow: rgba(37, 99, 235, 0.4);
+            --accent-glow: rgba(6, 182, 212, 0.4);
+
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #0ea5e9;
+
+            /* Light Theme Base */
+            --bg-base: #f8fafc;
+            --bg-grad-1: #dbeafe;
+            --bg-grad-2: #ecfeff;
+            --bg-panel: rgba(255, 255, 255, 0.85);
+            --bg-solid: #ffffff;
+            --bg-hover: rgba(37, 99, 235, 0.08);
+            --sidebar-bg: rgba(255, 255, 255, 0.65);
+
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-light: #94a3b8;
+
+            --border-light: rgba(37, 99, 235, 0.15);
+            --border-focus: rgba(37, 99, 235, 0.6);
+
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 4px 12px rgba(37, 99, 235, 0.08);
+            --shadow-float: 0 12px 30px rgba(37, 99, 235, 0.12);
+            --shadow-glow: 0 0 20px var(--primary-glow);
+
+            --code-bg: #0d1117;
+            --serial-bg: #0d1117;
+            --panel-border-top: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+
+            /* Sizing & Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-full: 9999px;
+
+            --transition-all: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            --font-ui: 'Prompt', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-code: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        /* 🌑 Dark Mode Base Overrides */
+        body.dark-mode {
+            --bg-base: #020617;
+            --bg-grad-1: #0f172a;
+            --bg-grad-2: #083344;
+            --bg-panel: rgba(15, 23, 42, 0.75);
+            --bg-solid: #0f172a;
+            --bg-hover: rgba(255, 255, 255, 0.08);
+            --sidebar-bg: rgba(2, 6, 23, 0.6);
+
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --text-light: #64748b;
+
+            --border-light: rgba(37, 99, 235, 0.3);
+            --code-bg: #000000;
+            --serial-bg: #000000;
+        }
+
+        /* 🎨 Expanded Accent Color Themes */
+        .theme-blue {
+            --primary-color: #2563eb;
+            --accent-color: #06b6d4;
+            --primary-glow: rgba(37, 99, 235, 0.4);
+            --accent-glow: rgba(6, 182, 212, 0.4);
+        }
+
+        .theme-green {
+            --primary-color: #10b981;
+            --accent-color: #14b8a6;
+            --primary-glow: rgba(16, 185, 129, 0.4);
+            --accent-glow: rgba(20, 184, 166, 0.4);
+        }
+
+        /* 🎨 Consolidated Elite Accent Color Themes */
+        .theme-blue {
+            --primary-color: #2563eb;
+            --accent-color: #0ea5e9;
+            --primary-glow: rgba(37, 99, 235, 0.4);
+            --accent-glow: rgba(14, 165, 233, 0.4);
+        }
+
+        .theme-green {
+            --primary-color: #059669;
+            --accent-color: #10b981;
+            --primary-glow: rgba(5, 150, 105, 0.4);
+            --accent-glow: rgba(16, 185, 129, 0.4);
+        }
+
+        .theme-purple {
+            --primary-color: #7c3aed;
+            --accent-color: #a855f7;
+            --primary-glow: rgba(124, 58, 237, 0.4);
+            --accent-glow: rgba(168, 85, 247, 0.4);
+        }
+
+        .theme-orange {
+            --primary-color: #ea580c;
+            --accent-color: #f97316;
+            --primary-glow: rgba(234, 88, 12, 0.4);
+            --accent-glow: rgba(249, 115, 22, 0.4);
+        }
+
+        .theme-sakura {
+            --primary-color: #db2777;
+            --accent-color: #f472b6;
+            --primary-glow: rgba(219, 39, 119, 0.4);
+            --accent-glow: rgba(244, 114, 182, 0.4);
+        }
+
+        .theme-gold {
+            --primary-color: #b45309;
+            --accent-color: #fbbf24;
+            --primary-glow: rgba(180, 83, 9, 0.4);
+            --accent-glow: rgba(251, 191, 36, 0.4);
+        }
+
+        .theme-hacker {
+            --primary-color: #22c55e;
+            --accent-color: #10b981;
+            --primary-glow: rgba(34, 197, 94, 0.5);
+            --accent-glow: rgba(16, 184, 129, 0.5);
+        }
+
+        /* 🎨 Custom Premium Dropdown Styles */
+        .color-selector-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .theme-dropdown-trigger {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: var(--bg-solid);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition-all);
+            min-width: 160px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .theme-dropdown-trigger:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .theme-dropdown-trigger i:last-child {
+            margin-left: auto;
+            font-size: 10px;
+            opacity: 0.5;
+            transition: transform 0.3s ease;
+        }
+
+        .color-selector-container.active .theme-dropdown-trigger i:last-child {
+            transform: rotate(180deg);
+        }
+
+        .theme-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 100%;
+            background: var(--bg-panel);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-float);
+            padding: 8px;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 1000;
+            overflow: hidden;
+            animation: dropdown-fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes dropdown-fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .color-selector-container.active .theme-dropdown-menu {
+            display: flex;
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition-all);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .theme-option:hover {
+            background: var(--bg-hover);
+            color: var(--primary-color);
+            padding-left: 16px;
+        }
+
+        .theme-option.active {
+            background: var(--bg-hover);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .swatch-small {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .swatch-small.blue {
+            background: linear-gradient(135deg, #2563eb, #0ea5e9);
+        }
+
+        .swatch-small.green {
+            background: linear-gradient(135deg, #059669, #10b981);
+        }
+
+        .swatch-small.purple {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+        }
+
+        .swatch-small.orange {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        .swatch-small.sakura {
+            background: linear-gradient(135deg, #db2777, #f472b6);
+        }
+
+        .swatch-small.gold {
+            background: linear-gradient(135deg, #b45309, #fbbf24);
+        }
+
+        .swatch-small.hacker {
+            background: linear-gradient(135deg, #22c55e, #10b981);
+        }
+
+        body {
+            font-family: var(--font-ui);
+            background: linear-gradient(135deg, var(--bg-base) 0%, var(--bg-grad-1) 50%, var(--bg-grad-2) 100%);
+            background-size: 300% 300%;
+            animation: bg-pan 15s ease infinite;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            transition: background 0.4s ease, color 0.4s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        @keyframes bg-pan {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* =========================================
+           ✨ Header / Navbar (Sleek Full-Width)
+        ========================================= */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            height: 64px;
+            background: var(--bg-panel);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .brand-area {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-title {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 16px;
+            box-shadow: 0 4px 12px var(--primary-glow);
+            -webkit-text-fill-color: white;
+            /* Override for icon */
+        }
+
+        .project-tag {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition-bounce);
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .tag-empty {
+            background: var(--bg-hover);
+            color: var(--text-muted);
+            border-color: var(--border-light);
+        }
+
+        .tag-empty:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .tag-named {
+            background: var(--primary-glow);
+            color: var(--primary-color);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        /* =========================================
+           🎛️ Toolbar & Buttons (Clean Neumorphism)
+        ========================================= */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .divider {
+            width: 1px;
+            height: 24px;
+            background: var(--border-light);
+            margin: 0 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            font-family: var(--font-ui);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-all);
+            outline: none;
+        }
+
+        .btn:hover {
+            background: var(--bg-hover);
+            color: var(--primary-color);
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color)) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 12px var(--primary-glow) !important;
+            transition: var(--transition-bounce);
+        }
+
+        .btn.primary:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px var(--primary-glow) !important;
+            color: white !important;
+        }
+
+        .btn-icon {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            border-radius: var(--radius-sm);
+        }
+
+        .btn-icon i {
+            font-size: 15px;
+        }
+
+        /* Segment Control style for Code/Serial toggles */
+        .segment-group {
+            display: flex;
+            background: var(--bg-hover);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            gap: 4px;
+        }
+
+        .segment-btn {
+            background: transparent;
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+        }
+
+        .segment-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .segment-btn.active {
+            background: var(--bg-solid);
+            color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+            border-color: var(--border-light);
+            font-weight: 600;
+        }
+
+        body.dark-mode .segment-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark-mode .segment-btn.active {
+            background: var(--bg-solid);
+        }
+
+        /* Tooltip */
+        [data-tooltip] {
+            position: relative;
+        }
+
+        [data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -36px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-5px);
+            background: var(--text-main);
+            color: var(--bg-solid);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition-all);
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+        }
+
+        [data-tooltip]:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .btn-flash {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white !important;
+            padding: 8px 18px;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            margin-left: 8px;
+            border: none;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px var(--primary-glow);
+            font-size: 13px;
+        }
+
+        .btn-flash:hover {
+            background: linear-gradient(135deg, #1d4ed8, #0891b2) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--primary-glow), 0 0 15px var(--accent-glow) !important;
+            filter: saturate(1.5) !important;
+            color: white !important;
+        }
+
+        .btn-flash:hover::after {
+            color: #fbbf24;
+            filter: drop-shadow(0 0 10px #fbbf24);
+            transform: translateY(-50%) scale(1.2) rotate(10deg);
+        }
+
+        @keyframes boltFloat {
+
+            0%,
+            100% {
+                transform: translateY(-50%) translateX(0);
+            }
+
+            50% {
+                transform: translateY(-55%) translateX(2px);
+            }
+        }
+
+        /* Modern Select Dropdown */
+        .theme-select {
+            appearance: none;
+            background: var(--bg-hover);
+            border: 1px solid transparent;
+            color: var(--text-main);
+            padding: 6px 14px 6px 30px;
+            font-family: var(--font-ui);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            border-radius: var(--radius-sm);
+            transition: var(--transition-all);
+        }
+
+        .theme-select:hover {
+            border-color: var(--border-light);
+            background: var(--bg-solid);
+        }
+
+        .theme-select option {
+            background: var(--bg-solid);
+            color: var(--text-main);
+        }
+
+        .select-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .select-wrapper i {
+            position: absolute;
+            left: 10px;
+            font-size: 13px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* =========================================
+           📦 Main Workspace (Layout)
+        ========================================= */
+        .workspace-container {
+            display: flex;
+            flex-direction: row;
+            flex: 1;
+            background: var(--bg-solid);
+            border-top: 1px solid var(--border-light);
+            overflow: hidden;
+            position: relative;
+            transition: opacity 0.4s ease-in-out;
+            opacity: 1;
+        }
+
+        .workspace-container.is-loading {
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+
+        /* 🧰 Sidebar / Toolbox */
+        .sidebar {
+            display: flex;
+            flex-direction: row;
+            flex: 1;
+            background: transparent;
+            min-width: 280px;
+            overflow: hidden;
+        }
+
+        .toolbox-panel {
+            width: 280px;
+            min-width: 280px;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 24px 18px;
+            z-index: 10;
+        }
+
+        .toolbox-panel::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .toolbox-panel::-webkit-scrollbar-thumb {
+            background: rgba(37, 99, 235, 0.1);
+            border-radius: 10px;
+        }
+
+        .toolbox-panel:hover::-webkit-scrollbar-thumb {
+            background: rgba(37, 99, 235, 0.2);
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-light);
+            margin: 24px 6px 12px 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.8;
+        }
+
+        .nav-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border-light), transparent);
+        }
+
+        .nav-label:first-child {
+            margin-top: 0;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            padding: 10px 14px;
+            margin-bottom: 6px;
+            border-radius: var(--radius-md);
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-solid);
+            border-radius: 10px;
+            color: var(--text-muted);
+            transition: var(--transition-bounce);
+            border: 1px solid var(--border-light);
+            flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-btn i {
+            font-size: 15px;
+        }
+
+        .nav-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-main);
+            transform: translateX(6px);
+        }
+
+        .nav-btn:hover .nav-btn-icon {
+            color: var(--primary-color);
+            background: var(--bg-solid);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px var(--primary-glow);
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .nav-btn.active {
+            background: var(--bg-solid);
+            color: var(--primary-color);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-md), 0 0 0 4px rgba(37, 99, 235, 0.03);
+            font-weight: 600;
+        }
+
+        .nav-btn.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            bottom: 20%;
+            width: 4px;
+            background: var(--primary-color);
+            border-radius: 0 4px 4px 0;
+            box-shadow: 2px 0 10px var(--primary-glow);
+        }
+
+        .nav-btn.active .nav-btn-icon {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+
+        body.theme-hacker .nav-btn.active {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+        }
+
+        /* Blockly Area */
+        #blocklyArea {
+            flex: 1;
+            position: relative;
+            background: transparent;
+        }
+
+        #blocklyDiv {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        /* =========================================
+           📏 Glowing Resizers
+        ========================================= */
+        .resizer-v {
+            width: 4px;
+            cursor: col-resize;
+            background: transparent;
+            position: relative;
+            z-index: 20;
+            transition: background 0.2s ease;
+            display: none;
+        }
+
+        .resizer-v::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 1px;
+            width: 1px;
+            background: var(--border-light);
+        }
+
+        .resizer-v:hover,
+        .resizer-v.active {
+            background: var(--primary-glow);
+        }
+
+        .resizer-v:hover::after,
+        .resizer-v.active::after {
+            background: var(--primary-color);
+            width: 2px;
+        }
+
+        .resizer-h {
+            height: 4px;
+            cursor: row-resize;
+            background: transparent;
+            position: relative;
+            z-index: 20;
+            transition: background 0.2s ease;
+            display: none;
+        }
+
+        .resizer-h::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 1px;
+            height: 1px;
+            background: #333;
+        }
+
+        .resizer-h:hover,
+        .resizer-h.active {
+            background: var(--primary-glow);
+        }
+
+        .resizer-h:hover::after,
+        .resizer-h.active::after {
+            background: var(--primary-color);
+            height: 2px;
+        }
+
+        .resizer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            display: none;
+        }
+
+        /* =========================================
+           💻 Right Panel (Neon Terminal)
+        ========================================= */
+        .right-panel {
+            display: none;
+            flex-direction: column;
+            background: var(--code-bg);
+            min-width: 320px;
+            width: 40%;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .code-box,
+        .serial-box {
+            display: none;
+            flex-direction: column;
+            padding: 0;
+            min-height: 150px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .code-box {
+            height: 50%;
+        }
+
+        .serial-box {
+            flex: 1;
+        }
+
+        .code-box::before,
+        .serial-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--panel-border-top);
+            z-index: 5;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            position: relative;
+            z-index: 10;
+        }
+
+        .panel-title {
+            color: #e2e8f0;
+            font-size: 12px;
+            font-family: var(--font-code);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-title i {
+            color: var(--accent-color);
+            font-size: 13px;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .panel-actions .btn {
+            font-size: 11px;
+            padding: 4px 10px;
+            color: #94a3b8;
+            border-radius: 4px;
+            border: 1px solid transparent;
+        }
+
+        .panel-actions .btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .panel-actions .btn.danger {
+            color: #f87171;
+        }
+
+        .panel-actions .btn.danger:hover {
+            background: rgba(248, 113, 113, 0.15);
+        }
+
+        .panel-actions .btn.primary {
+            color: #38bdf8;
+        }
+
+        .panel-actions .btn.primary:hover {
+            background: rgba(56, 189, 248, 0.15);
+        }
+
+        #codePreview {
+            flex: 1;
+            margin: 0;
+            border: none;
+            font-family: var(--font-code) !important;
+            font-size: 13px !important;
+            line-height: 1.6;
+        }
+
+        #serialLog {
+            flex: 1;
+            overflow-y: auto;
+            font-family: var(--font-code);
+            font-size: 13px;
+            white-space: pre-wrap;
+            padding: 12px;
+            background: transparent;
+            color: #4ade80;
+        }
+
+        .terminal-input-bar {
+            display: flex;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .terminal-prefix {
+            color: var(--accent-color);
+            font-family: var(--font-code);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 8px 4px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .terminal-input-bar input {
+            flex: 1;
+            background: transparent;
+            color: #f8fafc;
+            border: none;
+            outline: none;
+            font-family: var(--font-code);
+            font-size: 13px;
+        }
+
+        .terminal-input-bar input::placeholder {
+            color: #475569;
+        }
+
+        /* =========================================
+           🟢 Bottom Status Bar (New IDE Feature)
+        ========================================= */
+        .status-bar {
+            height: 28px;
+            background: var(--primary-color);
+            color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 12px;
+            font-family: var(--font-ui);
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        body.dark-mode .status-bar {
+            background: var(--bg-solid);
+            border-top: 1px solid var(--border-light);
+            color: var(--text-muted);
+        }
+
+        .status-left,
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .status-item:hover {
+            color: white;
+        }
+
+        body.dark-mode .status-item:hover {
+            color: var(--text-main);
+        }
+
+        .status-item.connected i {
+            color: #4ade80;
+            text-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+        }
+
+        .status-item.disconnected i {
+            color: #f87171;
+        }
+
+        /* =========================================
+           📜 Scrollbars
+        ========================================= */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-light);
+        }
+
+        /* =========================================
+           🚨 SweetAlert2 Modern Override
+        ========================================= */
+        .swal2-popup {
+            background: var(--bg-panel) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            color: var(--text-main) !important;
+            border: 1px solid var(--border-light) !important;
+            border-radius: var(--radius-lg) !important;
+            box-shadow: var(--shadow-float) !important;
+            font-family: var(--font-ui) !important;
+            padding: 24px !important;
+            overflow: hidden !important;
+            /* Critical fix: prevents timer bar from overflowing rounded corners */
+        }
+
+        .swal2-title {
+            color: var(--text-main) !important;
+            font-size: 24px !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.5px !important;
+            margin-bottom: 8px !important;
+        }
+
+        .swal2-html-container {
+            color: var(--text-muted) !important;
+            text-align: left !important;
+            margin: 16px 0 0 0 !important;
+            font-size: 14px !important;
+            line-height: 1.6 !important;
+        }
+
+        .swal2-input,
+        .swal2-textarea,
+        .swal2-select {
+            background: var(--bg-solid) !important;
+            color: var(--text-main) !important;
+            border: 1px solid var(--border-light) !important;
+            border-radius: var(--radius-md) !important;
+            box-shadow: var(--shadow-sm) !important;
+            font-family: var(--font-ui) !important;
+            font-size: 14px !important;
+            height: 48px !important; /* Standardized larger height */
+            padding: 0 16px !important;
+            transition: var(--transition-all) !important;
+        }
+
+        .swal2-textarea {
+            height: auto !important;
+            padding: 12px 16px !important;
+            min-height: 100px !important;
+        }
+
+        .swal2-input:focus,
+        .swal2-textarea:focus,
+        .swal2-select:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 4px var(--primary-glow) !important;
+            outline: none !important;
+        }
+
+        .swal2-actions {
+            margin-top: 24px !important;
+            gap: 8px !important;
+        }
+
+        /* 💎 Premium Progress Bar */
+        .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color)) !important;
+            height: 4px !important;
+            opacity: 0.9 !important;
+        }
+
+        /* Ensure Icons are perfectly round and compatible with glassmorphism */
+        .swal2-icon {
+            border-radius: 50% !important;
+            margin-top: 20px !important;
+        }
+
+        .swal2-icon.swal2-success {
+            border-color: var(--success-color) !important;
+            color: var(--success-color) !important;
+        }
+
+        .swal2-icon.swal2-success [class^='swal2-success-line'] {
+            background-color: var(--success-color) !important;
+        }
+
+        .swal2-icon.swal2-success .swal2-success-ring {
+            border: .25em solid rgba(16, 185, 129, 0.2) !important;
+        }
+
+        .swal2-icon.swal2-error {
+            border-color: var(--danger-color) !important;
+            color: var(--danger-color) !important;
+        }
+
+        .swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
+            background-color: var(--danger-color) !important;
+        }
+
+        /* 🔘 Button Aesthetics (Premium Gradients) */
+        .swal2-confirm.swal2-styled {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color)) !important;
+            color: white !important;
+            border-radius: var(--radius-md) !important;
+            padding: 12px 32px !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            box-shadow: 0 4px 12px var(--primary-glow) !important;
+            transition: var(--transition-bounce) !important;
+            border: none !important;
+        }
+
+        .swal2-confirm.swal2-styled:hover {
+            filter: brightness(1.1) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px var(--primary-glow) !important;
+        }
+
+        .swal2-cancel.swal2-styled {
+            background-color: var(--bg-hover) !important;
+            color: var(--text-main) !important;
+            border: 1px solid var(--border-light) !important;
+            border-radius: var(--radius-md) !important;
+            padding: 12px 32px !important;
+            font-weight: 500 !important;
+            font-size: 14px !important;
+            transition: var(--transition-all) !important;
+        }
+
+        .swal2-cancel.swal2-styled:hover {
+            background-color: var(--danger-color) !important;
+            color: white !important;
+            border-color: var(--danger-color) !important;
+        }
+
+        .swal2-deny.swal2-styled {
+            background-color: var(--text-light) !important;
+            color: white !important;
+            border-radius: var(--radius-md) !important;
+            padding: 12px 32px !important;
+            font-size: 14px !important;
+        }
+
+        /* Hide the masks that cause "cutting" effect in glassmorphism */
+        .swal2-icon.swal2-success [class^='swal2-success-circular-line'],
+        .swal2-icon.swal2-success .swal2-success-fix {
+            display: none !important;
+        }
+
+        /* 🚨 Validation Message Styling */
+        .swal2-validation-message {
+            background: var(--bg-solid) !important;
+            color: var(--danger-color) !important;
+            border: 1px solid var(--border-light) !important;
+            border-radius: var(--radius-sm) !important;
+            font-size: 13px !important;
+            margin-top: 16px !important;
+            padding: 12px !important;
+            box-shadow: var(--shadow-sm) !important;
+            display: none;
+            /* Hide by default */
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        /* Only show as flex when SweetAlert toggles visibility */
+        .swal2-validation-message[style*="display: flex"],
+        .swal2-validation-message[style*="display: block"] {
+            display: flex !important;
+        }
+
+        .swal2-validation-message::before {
+            content: "⚠️";
+            font-size: 14px;
+        }
+
+        .custom-dialog-header {
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-dialog-list-item {
+            background: var(--bg-base);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition-all);
+        }
+
+        .custom-dialog-list-item:hover {
+            border-color: var(--primary-color);
+        }
+
+        /* 🧱 Blockly Tweaks */
+        .blocklyMainBackground {
+            stroke: none !important;
+            fill: transparent !important;
+        }
+
+        .blocklyFlyoutBackground {
+            fill: var(--bg-solid) !important;
+            fill-opacity: 0.7 !important;
+            backdrop-filter: blur(8px);
+        }
+
+        /* 📱 Mobile */
+        @media (max-width: 768px) {
+            .app-header {
+                height: auto;
+                flex-direction: column;
+                padding: 16px;
+                gap: 16px;
+            }
+
+            /* =========================================
+           📱 Responsive Design (Mobile First)
+        ========================================= */
+            @media screen and (max-width: 1100px) {
+                .workspace-container {
+                    flex-direction: column;
+                    overflow-y: auto;
+                }
+
+                .sidebar {
+                    flex-direction: column;
+                    min-width: 100%;
+                    flex: none;
+                }
+
+                .toolbox-panel {
+                    width: 100% !important;
+                    min-width: 100% !important;
+                    height: 200px;
+                    border-right: none;
+                    border-bottom: 1px solid var(--border-light);
+                }
+
+                .right-panel {
+                    width: 100% !important;
+                    min-width: 100% !important;
+                    flex: none;
+                    border-left: none;
+                    border-top: 1px solid var(--border-light);
+                }
+
+                #blocklyArea {
+                    height: 50vh;
+                    min-height: 400px;
+                }
+
+                .app-header {
+                    height: auto;
+                    padding: 12px;
+                    flex-direction: column;
+                    gap: 12px;
+                }
+
+                .brand-area {
+                    width: 100%;
+                    justify-content: space-between;
+                }
+
+                .toolbar {
+                    width: 100%;
+                    justify-content: center;
+                    overflow-x: auto;
+                    padding-bottom: 5px;
+                }
+
+                .divider {
+                    height: 16px;
+                    margin: 0 5px;
+                }
+            }
+
+            @media screen and (max-width: 600px) {
+                .logo-title span {
+                    display: none;
+                }
+
+                .nav-btn span {
+                    display: none;
+                }
+
+                .nav-btn {
+                    width: auto;
+                    padding: 8px;
+                }
+
+                .nav-label {
+                    font-size: 8px;
+                }
+            }
+    </style>
+</head>
+
+<body>
+
+    <div class="resizer-overlay" id="resizerOverlay"></div>
+
+    <!-- 🌟 Top Header (Full Width Navbar) -->
+    <header class="app-header">
+        <div class="brand-area">
+            <div class="logo-title">
+                <div class="logo-icon"><i class="fa-solid fa-microchip"></i></div>
+                RP2350 Pro
+            </div>
+            <div class="divider" style="height: 16px; margin: 0;"></div>
+            <div id="projectNameDisplay" class="project-tag tag-empty" onclick="renameProject()"
+                data-tooltip="เปลี่ยนชื่อโปรเจกต์">
+                <i class="fa-solid fa-code-branch"></i> <span>Untitled</span>
+            </div>
+            <button class="btn btn-icon" style="margin-left: -5px;" onclick="newProject()"
+                data-tooltip="เริ่มโปรเจกต์ใหม่"><i class="fa-solid fa-file-circle-plus"></i></button>
+        </div>
+
+        <div class="toolbar">
+            <!-- Panels Toggle (Segmented Control) -->
+            <div class="segment-group">
+                <button class="btn btn-icon segment-btn" onclick="togglePanel('code')" id="btnToggleCode"
+                    data-tooltip="หน้าต่าง C++"><i class="fa-solid fa-code"></i></button>
+                <button class="btn btn-icon segment-btn" onclick="togglePanel('serial')" id="btnToggleSerial"
+                    data-tooltip="หน้าต่าง Serial"><i class="fa-solid fa-terminal"></i></button>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Tools -->
+            <button class="btn btn-icon" onclick="jumpToSetup()" data-tooltip="กลับจุดเริ่มต้น (Setup)"><i
+                    class="fa-solid fa-house"></i></button>
+            <button class="btn btn-icon" onclick="cleanUpWorkspace()" data-tooltip="จัดระเบียบบล็อก"><i
+                    class="fa-solid fa-broom"></i></button>
+            <button class="btn btn-icon" onclick="openSrcManager()" data-tooltip="จัดการ Source Code"><i
+                    class="fa-solid fa-folder-tree"></i></button>
+            <button class="btn btn-icon" onclick="openLibManager()" data-tooltip="จัดการไลบรารี"><i
+                    class="fa-solid fa-book-bookmark"></i></button>
+            <button class="btn btn-icon" onclick="openCustomBlockManager()" data-tooltip="สร้างบล็อกเสริม"><i
+                    class="fa-solid fa-puzzle-piece"></i></button>
+
+            <div class="divider"></div>
+
+            <!-- Files -->
+            <button class="btn btn-icon" onclick="openFileManager()" data-tooltip="เปิดแฟ้มผลงาน"><i
+                    class="fa-solid fa-folder-open"></i></button>
+            <button class="btn btn-icon" onclick="downloadProject()" data-tooltip="บันทึกลงเครื่อง"><i
+                    class="fa-solid fa-download"></i></button>
+            <button class="btn btn-icon" onclick="importFile()" data-tooltip="นำเข้าไฟล์ .rp2350"><i
+                    class="fa-solid fa-upload"></i></button>
+
+            <div class="divider"></div>
+
+            <!-- Day/Night Toggle -->
+            <button class="btn btn-icon" onclick="toggleThemeMode()" id="btnThemeMode"
+                data-tooltip="สลับโหมด กลางวัน/กลางคืน">
+                <i class="fa-solid fa-sun" id="themeModeIcon"></i>
+            </button>
+
+            <div class="divider"></div>
+
+            <!-- Color Selector (Beautiful Dropdown) -->
+            <div class="color-selector-container" id="themeSelector">
+                <div class="theme-dropdown-trigger" onclick="toggleThemeDropdown()">
+                    <i class="fa-solid fa-palette"></i>
+                    <span id="currentThemeLabel">Blue Sky</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="theme-dropdown-menu">
+                    <div class="theme-option" onclick="changeThemeAccent('blue')" data-theme="blue">
+                        <div class="swatch-small blue"></div>
+                        <span>Blue Sky</span>
+                    </div>
+                    <div class="theme-option" onclick="changeThemeAccent('green')" data-theme="green">
+                        <div class="swatch-small green"></div>
+                        <span>Emerald Forest</span>
+                    </div>
+                    <div class="theme-option" onclick="changeThemeAccent('purple')" data-theme="purple">
+                        <div class="swatch-small purple"></div>
+                        <span>Midnight Purple</span>
+                    </div>
+                    <div class="theme-option" onclick="changeThemeAccent('orange')" data-theme="orange">
+                        <div class="swatch-small orange"></div>
+                        <span>Sunset Orange</span>
+                    </div>
+                    <div class="theme-option" onclick="changeThemeAccent('sakura')" data-theme="sakura">
+                        <div class="swatch-small sakura"></div>
+                        <span>Sakura Pink</span>
+                    </div>
+                    <div class="theme-option" onclick="changeThemeAccent('gold')" data-theme="gold">
+                        <div class="swatch-small gold"></div>
+                        <span>Premium Gold</span>
+                    </div>
+                    <div class="theme-option" onclick="changeThemeAccent('hacker')" data-theme="hacker">
+                        <div class="swatch-small hacker"></div>
+                        <span>Hacker Neon</span>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                /* Special styles for Swal File Manager */
+                .btn-add-project {
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    background: var(--primary-color);
+                    color: white !important;
+                    border: none;
+                    border-radius: 50%;
+                    width: 32px;
+                    height: 32px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    transition: transform 0.2s;
+                    z-index: 10;
+                }
+
+                .btn-add-project:hover {
+                    transform: scale(1.1);
+                    background: var(--primary-hover);
+                }
+            </style>
+
+            <!-- Upload -->
+            <button id="btnFlash" class="btn btn-flash" onclick="handleUpload()"><i class="fa-solid fa-bolt"></i>
+                Upload</button>
+        </div>
+    </header>
+
+    <!-- 🌟 Main Workspace -->
+    <main class="workspace-container is-loading" id="container">
+
+        <!-- แถบด้านซ้าย (Toolbox) -->
+        <div class="sidebar" id="leftPanel">
+
+            <div id="customToolbox" class="toolbox-panel">
+                <div class="nav-label">หุ่นยนต์ (Robot)</div>
+                <button class="nav-btn active" onclick="loadCategory('setup', this)">
+                    <div class="nav-btn-icon"><i class="fa-solid fa-sliders"></i></div>
+                    <span>ตั้งค่าหุ่นยนต์</span>
+                </button>
+                <button class="nav-btn" onclick="loadCategory('movement', this)">
+                    <div class="nav-btn-icon"><i class="fa-solid fa-car-side"></i></div>
+                    <span>เคลื่อนที่</span>
+                </button>
+                <button class="nav-btn" onclick="loadCategory('turn', this)">
+                    <div class="nav-btn-icon"><i class="fa-solid fa-rotate-left"></i></div>
+                    <span>เลี้ยวและหมุน</span>
+                </button>
+                <button class="nav-btn" onclick="loadCategory('action', this)">
+                    <div class="nav-btn-icon"><i class="fa-solid fa-robot"></i></div>
+                    <span>สั่งงานเซ็นเซอร์</span>
+                </button>
+
+                <div class="nav-label">โครงสร้าง (Logic)</div>
+                <button class="nav-btn" onclick="loadCategory('logic', this)">
+                    <div class="nav-btn-icon"><i class="fa-solid fa-code-branch"></i></div>
+                    <span>เงื่อนไข (If-Else)</span>
+                </button>
+                <button class="nav-btn" onclick="loadCategory('loops', this)">
+                    <div class="nav-btn-icon"><i class="fa-solid fa-retweet"></i></div>
+                    <span>วนซ้ำ (Loops)</span>
+                </button>
+                <button class="nav-btn" onclick="loadCategory('math', this)">
+                    <div class="nav-btn-icon"><i class="fa-solid fa-calculator"></i></div>
+                    <span>คณิตศาสตร์</span>
+                </button>
+
+                <div class="nav-label">ข้อมูล (Data)</div>
+                <button class="nav-btn" onclick="loadCategory('variables', this)">
+                    <div class="nav-btn-icon"><i class="fa-solid fa-box-archive"></i></div>
+                    <span>ตัวแปร</span>
+                </button>
+                <button class="nav-btn" onclick="loadCategory('functions', this)">
+                    <div class="nav-btn-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <span>ฟังก์ชัน</span>
+                </button>
+
+                <div id="dynamicCustomCategories"></div>
+            </div>
+
+            <!-- พื้นที่วาดบล็อก -->
+            <div id="blocklyArea">
+                <div id="blocklyDiv"></div>
+            </div>
+        </div>
+
+        <div class="resizer-v" id="resizerV"></div>
+
+        <!-- แถบด้านขวา (Code Editor & Terminal) -->
+        <div class="right-panel" id="rightPanel">
+
+            <div class="code-box" id="codeBox">
+                <div class="panel-header">
+                    <span class="panel-title"><i class="fa-solid fa-file-code"></i> main.ino</span>
+                    <div class="panel-actions">
+                        <button id="btnFormatCode" class="btn primary" style="display:none;"
+                            onclick="formatMainCode()"><i class="fa-solid fa-wand-magic-sparkles"></i> จัดโค้ด</button>
+                        <button id="btnEditCode" class="btn" onclick="enableManualEdit()"><i
+                                class="fa-solid fa-pen"></i> แก้ไขเอง</button>
+                        <button id="btnResetCode" class="btn danger" style="display:none;"
+                            onclick="resetManualEdit()"><i class="fa-solid fa-xmark"></i> เลิกแก้ไข</button>
+                    </div>
+                </div>
+                <div id="codePreview"></div>
+            </div>
+
+            <div class="resizer-h" id="resizerH"></div>
+
+            <div class="serial-box" id="serialBox">
+                <div class="panel-header">
+                    <span class="panel-title"><i class="fa-solid fa-terminal"></i> Terminal</span>
+                    <div class="panel-actions">
+                        <button class="btn" id="btnScroll" onclick="toggleAutoScroll()" title="Auto Scroll"><i
+                                class="fa-solid fa-arrow-down"></i></button>
+                        <button class="btn" onclick="clearSerial()" title="Clear Screen"><i
+                                class="fa-solid fa-eraser"></i></button>
+                        <button class="btn primary" id="btnSerial" onclick="toggleSerial()"><i
+                                class="fa-solid fa-plug"></i> Connect Serial</button>
+                    </div>
+                </div>
+                <div id="serialLog"></div>
+                <div class="terminal-input-bar">
+                    <span class="terminal-prefix">❯</span>
+                    <input type="text" id="serialIn" placeholder="พิมพ์คำสั่งแล้วกด Enter..."
+                        onkeypress="if(event.key==='Enter') sendSerial()">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 🟢 Bottom Status Bar -->
+    <footer class="status-bar">
+        <div class="status-left">
+            <div class="status-item disconnected" id="bottomSerialStatus" onclick="toggleSerial()">
+                <i class="fa-solid fa-circle-xmark"></i>
+                <span id="bottomSerialText">No Port Connected</span>
+            </div>
+            <div class="status-item" style="cursor: default;">
+                <i class="fa-solid fa-check"></i>
+                <span>Blockly Ready</span>
+            </div>
+        </div>
+        <div class="status-right">
+            <span>RP2350 Pro IDE v1.2</span>
+        </div>
+    </footer>
+
+    <!-- Hidden Inputs -->
+    <input type="file" id="fileIn" style="display:none" accept=".rp2350" onchange="loadLocalFile(event)">
+    <input type="file" id="zipIn" style="display:none" accept=".zip" onchange="uploadZipLibrary(event)">
+    <input type="file" id="customBlockIn" style="display:none" accept=".json" onchange="importCustomBlocks(event)">
+
+    <script>
+        // ----------------------------------------------------
+        // Setup & Utils
+        // ----------------------------------------------------
+        window.Swal = Swal.mixin({
+            heightAuto: false,
+            scrollbarPadding: false,
+            customClass: { popup: 'modern-popup' }
+        });
+        window.codeGenerator = javascript.javascriptGenerator;
+
+        window.currentProjectName = localStorage.getItem('rp_project_name') || "";
+        window.isCodeOpen = false;
+        window.isSerialOpen = false;
+        window.autoScroll = true;
+        window.customBlocksData = [];
+
+        function validateCustomBlockCode(code) {
+            if (!code || typeof code !== 'string') throw new Error('Invalid code input');
+            const dangerousPatterns = [/eval\s*\(/gi, /exec\s*\(/gi, /system\s*\(/gi, /__.*__/gi, /process\./gi, /require\s*\(/gi, /import\s+/gi];
+            for (let pattern of dangerousPatterns) {
+                if (pattern.test(code)) throw new Error('Dangerous code pattern detected');
+            }
+            if (code.length > 5000) throw new Error('Code too large (max 5000 characters)');
+            return true;
+        }
+
+        const VALID_TYPES = ['int', 'float', 'double', 'bool', 'char', 'void', 'String', 'uint8_t', 'uint16_t', 'uint32_t', 'int8_t', 'int16_t', 'int32_t'];
+        function validateArgType(type) {
+            if (!type || typeof type !== 'string') return false;
+            const trimmed = type.trim();
+            return VALID_TYPES.some(vt => trimmed === vt || trimmed.includes(vt));
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // ----------------------------------------------------
+        // State & AutoSave
+        // ----------------------------------------------------
+        window.editingBlockId = null;
+        window.isManualEditing = false;
+        window.originalBlocklyCode = "";
+        window.generatedCppCode = "";
+        window.generatedUserCode = "";
+        window.autoSaveTimer = null;
+        window.hasUnsavedChanges = false;
+        window.currentCategoryId = 'setup';
+
+        window.addEventListener('beforeunload', (e) => {
+            if (workspace.hasBlocks && window.hasUnsavedChanges) {
+                e.preventDefault(); e.returnValue = ''; return '';
+            }
+        });
+
+        let autoSaveDebounceTimer;
+        function triggerAutoSave() {
+            if (autoSaveDebounceTimer) clearTimeout(autoSaveDebounceTimer);
+            autoSaveDebounceTimer = setTimeout(() => {
+                performAutoSave();
+            }, 2000);
+        }
+
+        async function performAutoSave() {
+            // Keep saving even if workspace is empty to ensure the file exists on the server
+            try {
+                const xml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
+
+                // Local Backup
+                const autoSaveData = JSON.stringify({
+                    blocks: xml, customBlocks: window.customBlocksData,
+                    name: window.currentProjectName || '', timestamp: Date.now()
+                });
+                localStorage.setItem('rp2350_autosave', autoSaveData);
+
+                // Server Auto-Save
+                if (window.currentProjectName) {
+                    fetch('/save_file', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            filename: window.currentProjectName + '.rp2350',
+                            xml: xml,
+                            customBlocks: window.customBlocksData,
+                            userCode: window.generatedUserCode // Include generated code
+                        })
+                    }).then(res => res.json()).then(data => {
+                        if (data.success) {
+                            window.hasUnsavedChanges = false;
+                        }
+                    }).catch(err => console.error('Server auto-save failed', err));
+                } else {
+                }
+
+                // Save scroll position
+                localStorage.setItem('rp_scroll_x', workspace.scrollX);
+                localStorage.setItem('rp_scroll_y', workspace.scrollY);
+            } catch (error) { }
+        }
+
+        // Keep the interval as a fallback for non-block changes if needed
+        // Keep the interval as a fallback for non-block changes if needed
+        function autoSaveProject() {
+            if (window.autoSaveTimer) clearInterval(window.autoSaveTimer);
+            window.autoSaveTimer = setInterval(performAutoSave, 60000); // Once a minute as fallback
+        }
+        autoSaveProject();
+
+        window.onbeforeunload = () => {
+            if (window.hasUnsavedChanges) performAutoSave();
+        };
+
+        function loadAutoSavedProject() {
+            const saved = localStorage.getItem('rp2350_autosave');
+            if (!saved) return false;
+            try {
+                const projectData = JSON.parse(saved);
+                window.customBlocksData = projectData.customBlocks || [];
+                if (window.customBlocksData.length) reloadCustomBlocks();
+
+                if (projectData.blocks) {
+                    try {
+                        const xml = Blockly.utils.xml.textToDom(projectData.blocks);
+                        // Mock missing blocks
+                        let blockElems = [];
+                        if (xml && xml.getElementsByTagName) {
+                            const b = Array.from(xml.getElementsByTagName('block') || []);
+                            const s = Array.from(xml.getElementsByTagName('shadow') || []);
+                            blockElems = b.concat(s);
+                        }
+                        const unknownKinds = {};
+                        for (let i = 0; i < blockElems.length; i++) {
+                            const node = blockElems[i];
+                            const t = node.getAttribute && node.getAttribute('type');
+                            if (!t || Blockly.Blocks[t]) continue;
+                            const parentName = node.parentNode && node.parentNode.nodeName ? node.parentNode.nodeName.toLowerCase() : '';
+                            const isValueContext = (node.nodeName && node.nodeName.toLowerCase() === 'shadow') || parentName === 'value' || parentName === 'mutation';
+                            if (!unknownKinds[t]) unknownKinds[t] = isValueContext ? 'output' : 'statement';
+                            else if (unknownKinds[t] === 'statement' && isValueContext) unknownKinds[t] = 'mixed';
+                        }
+                        Object.keys(unknownKinds).forEach((type) => {
+                            if (!Blockly.Blocks[type]) {
+                                const kind = unknownKinds[type];
+                                Blockly.Blocks[type] = {
+                                    init: function () {
+                                        this.appendDummyInput().appendField(type.replace(/_/g, ' '));
+                                        if (kind === 'output' || kind === 'mixed') { this.setOutput(true, null); }
+                                        else { this.setPreviousStatement(true, null); this.setNextStatement(true, null); }
+                                        this.setColour(180);
+                                    }
+                                };
+                                try { window.codeGenerator.forBlock[type] = function () { return `// [placeholder] ${type}\n`; }; } catch (e) { }
+                            }
+                        });
+                        Blockly.Xml.domToWorkspace(xml, workspace);
+                        window.currentProjectName = projectData.name;
+                        updateBadge();
+                        return true;
+                    } catch (xmlErr) { }
+                }
+            } catch (error) { }
+            return false;
+        }
+
+        // ----------------------------------------------------
+        // Theme Management
+        // ----------------------------------------------------
+        // ----------------------------------------------------
+        // Theme Management (Refactored)
+        // ----------------------------------------------------
+        window.currentThemeMode = localStorage.getItem('themeMode') || 'light';
+        window.currentThemeAccent = localStorage.getItem('themeAccent') || 'blue';
+
+        const themeLabels = {
+            'blue': 'Blue Sky',
+            'green': 'Emerald Forest',
+            'purple': 'Midnight Purple',
+            'orange': 'Sunset Orange',
+            'sakura': 'Sakura Pink',
+            'gold': 'Premium Gold',
+            'hacker': 'Hacker Neon'
+        };
+
+        function applyTheme() {
+            const body = document.body;
+            body.className = body.className.split(' ').filter(c => !c.startsWith('theme-') && c !== 'dark-mode').join(' ');
+
+            const isDark = (window.currentThemeMode === 'dark');
+            if (isDark) {
+                body.classList.add('dark-mode');
+                document.getElementById('themeModeIcon').className = 'fa-solid fa-moon';
+            } else {
+                body.classList.remove('dark-mode');
+                document.getElementById('themeModeIcon').className = 'fa-solid fa-sun';
+            }
+
+            body.classList.add(`theme-${window.currentThemeAccent}`);
+
+            const aceTheme = isDark ? "ace/theme/github_dark" : "ace/theme/github";
+            if (window.editor) window.editor.setTheme(aceTheme);
+            if (window.srcAceEditor) window.srcAceEditor.setTheme(aceTheme);
+
+            // Update Custom Dropdown UI
+            const label = document.getElementById('currentThemeLabel');
+            if (label) label.innerText = themeLabels[window.currentThemeAccent] || 'Theme';
+
+            document.querySelectorAll('.theme-option').forEach(opt => {
+                if (opt.getAttribute('data-theme') === window.currentThemeAccent) {
+                    opt.classList.add('active');
+                } else {
+                    opt.classList.remove('active');
+                }
+            });
+
+            localStorage.setItem('themeMode', window.currentThemeMode);
+            localStorage.setItem('themeAccent', window.currentThemeAccent);
+            if (window.workspace) Blockly.svgResize(workspace);
+        }
+
+        function toggleThemeDropdown() {
+            document.getElementById('themeSelector').classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const selector = document.getElementById('themeSelector');
+            if (selector && !selector.contains(e.target)) {
+                selector.classList.remove('active');
+            }
+        });
+
+        function toggleThemeMode() {
+            window.currentThemeMode = (window.currentThemeMode === 'light') ? 'dark' : 'light';
+            applyTheme();
+        }
+
+        function changeThemeAccent(accent) {
+            window.currentThemeAccent = accent;
+            applyTheme();
+            document.getElementById('themeSelector').classList.remove('active');
+        }
+
+        // Initialize theme on load
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTheme();
+        });
+
+        // ----------------------------------------------------
+        // Ace Editor
+        // ----------------------------------------------------
+        const editor = ace.edit("codePreview");
+        editor.setTheme("ace/theme/github_dark");
+        editor.session.setMode("ace/mode/c_cpp");
+        editor.setReadOnly(true);
+        editor.setOptions({ fontSize: "14px", showPrintMargin: false, wrap: true, fontFamily: "var(--font-code)", highlightActiveLine: false, highlightGutterLine: false });
+        editor.container.style.background = "transparent";
+
+        editor.session.on('change', function () { if (window.isManualEditing) updateManualCode(); });
+
+        function jumpToSetup() {
+            const setupBlock = workspace.getBlocksByType('arduino_setup')[0];
+            if (setupBlock) {
+                workspace.centerOnBlock(setupBlock.id);
+                showStatusToast("กลับสู่โหมดเริ่มต้น (Setup) แล้ว");
+            } else {
+                workspace.scrollCenter();
+                showStatusToast("ไม่พบส่วน Setup", "warning");
+            }
+        }
+
+        function formatMainCode() { let beautify = ace.require("ace/ext/beautify"); beautify.beautify(editor.session); }
+        function cleanUpWorkspace() {
+            const topBlocks = workspace.getTopBlocks(true);
+            let setupBlock = null;
+            let loopBlock = null;
+            const sideBlocks = [];
+
+            topBlocks.forEach(b => {
+                if (b.type === 'arduino_setup') setupBlock = b;
+                else if (b.type === 'arduino_loop') loopBlock = b;
+                else sideBlocks.push(b);
+            });
+
+            if (!setupBlock || !loopBlock) {
+                workspace.cleanUp();
+                workspace.scrollCenter();
+                return;
+            }
+
+            // 🎯 CENTERED SPINE: Setup and Loop in middle of view
+            const centerX = 2000;
+            const centerY = 2000;
+
+            // Position Setup above center
+            setupBlock.moveBy(centerX - setupBlock.getRelativeToSurfaceXY().x, (centerY - 250) - setupBlock.getRelativeToSurfaceXY().y);
+
+            // Position Loop below Setup
+            const setupSize = setupBlock.getHeightWidth();
+            const loopY = (centerY - 250) + setupSize.height + 150;
+            loopBlock.moveBy(centerX - loopBlock.getRelativeToSurfaceXY().x, loopY - loopBlock.getRelativeToSurfaceXY().y);
+
+            // Branch others symmetrically
+            const leftBlocks = sideBlocks.filter((_, i) => i % 2 === 0);
+            const rightBlocks = sideBlocks.filter((_, i) => i % 2 !== 0);
+
+            let leftY = centerY - 250;
+            leftBlocks.forEach(b => {
+                b.moveBy((centerX - 600) - b.getRelativeToSurfaceXY().x, leftY - b.getRelativeToSurfaceXY().y);
+                leftY += b.getHeightWidth().height + 60;
+            });
+
+            let rightY = centerY - 250;
+            rightBlocks.forEach(b => {
+                b.moveBy((centerX + 600) - b.getRelativeToSurfaceXY().x, rightY - b.getRelativeToSurfaceXY().y);
+                rightY += b.getHeightWidth().height + 60;
+            });
+
+            // 🎯 CENTER VIEW on the Spine
+            workspace.scrollCenter();
+            showStatusToast("จัดระเบียบและวาง Setup & Loop ไว้กลางจอแล้ว");
+        }
+
+        function enableManualEdit() {
+            window.isManualEditing = true;
+            editor.setReadOnly(false);
+            editor.setOptions({ highlightActiveLine: true, highlightGutterLine: true });
+            document.getElementById('codeBox').style.boxShadow = "inset 0 0 0 1px var(--primary-color)";
+            document.getElementById('btnEditCode').style.display = "none";
+            document.getElementById('btnResetCode').style.display = "inline-flex";
+            document.getElementById('btnFormatCode').style.display = "inline-flex";
+        }
+
+        function resetManualEdit() {
+            window.isManualEditing = false;
+            editor.setReadOnly(true);
+            editor.setOptions({ highlightActiveLine: false, highlightGutterLine: false });
+            document.getElementById('codeBox').style.boxShadow = "none";
+            document.getElementById('btnEditCode').style.display = "inline-flex";
+            document.getElementById('btnResetCode').style.display = "none";
+            document.getElementById('btnFormatCode').style.display = "none";
+            editor.setValue(window.originalBlocklyCode, -1);
+            updateManualCode();
+        }
+
+        function updateManualCode() {
+            let fullText = editor.getValue();
+            let parts = fullText.split("// ======== User.ino ========");
+            window.generatedCppCode = parts[0];
+            window.generatedUserCode = parts[1] ? parts[1].trim() : "";
+        }
+
+        // ----------------------------------------------------
+        // Toolbox & Categories
+        // ----------------------------------------------------
+        const categoryBlocksXML = {
+            'setup': `<xml><block type="config_servo1"></block><block type="config_servo2"></block><block type="config_calibrate"></block><block type="config_turn_pid"></block></xml>`,
+            'movement': `<xml><block type="move_fline"></block><block type="move_notline"></block><block type="move_fline_pass"></block></xml>`,
+            'turn': `<xml><block type="turn_left"></block><block type="turn_left_stop"></block><block type="turn_left_st"></block><block type="turn_right"></block><block type="turn_right_stop"></block><block type="turn_right_st"></block></xml>`,
+            'action': `<xml><block type="servo_run"></block><block type="wait_sw1"></block><block type="check_line"></block><block type="delay_custom"></block></xml>`,
+            'logic': `<xml><block type="controls_if"></block><block type="logic_compare"></block><block type="logic_operation"></block><block type="logic_boolean"></block></xml>`,
+            'loops': `<xml><block type="controls_repeat_ext"></block><block type="controls_whileUntil"></block></xml>`,
+            'math': `<xml><block type="math_number"></block><block type="math_arithmetic"></block><block type="math_single"></block></xml>`
+        };
+
+        function loadCategory(catId, btnElement) {
+            const flyout = workspace.getFlyout();
+
+            // Capture current scroll for stabilization
+            const sx = workspace.scrollX;
+            const sy = workspace.scrollY;
+
+            // Toggle Logic: If clicking the already active category, close it.
+            if (window.currentCategoryId === catId) {
+                flyout.hide();
+                window.currentCategoryId = null;
+                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+                return;
+            }
+
+            // Clear previous active state
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+            window.currentCategoryId = catId;
+            if (btnElement) btnElement.classList.add('active');
+
+            if (catId === 'variables') { flyout.show(Blockly.Variables.flyoutCategory(workspace)); }
+            else if (catId === 'functions') { flyout.show(Blockly.Procedures.flyoutCategory(workspace)); }
+            else if (catId.startsWith('custom_')) {
+                let categoryName = catId.replace('custom_', '');
+                let xmlStr = '<xml>';
+                window.customBlocksData.forEach(cb => {
+                    if (cb.category === categoryName) {
+                        xmlStr += `<block type="custom_${cb.id}">`;
+                        cb.args.forEach(arg => {
+                            xmlStr += `<value name="${arg.name}"><shadow type="math_number"><field name="NUM">${arg.defaultVal || 0}</field></shadow></value>`;
+                        });
+                        xmlStr += `</block>`;
+                    }
+                });
+                xmlStr += '</xml>';
+                flyout.show(Blockly.utils.xml.textToDom(xmlStr));
+            } else {
+                flyout.show(Blockly.utils.xml.textToDom(categoryBlocksXML[catId]));
+            }
+
+            // Restore scroll position
+            workspace.scroll(sx, sy);
+            flyout.autoClose = false;
+        }
+
+        function renderCustomCategories() {
+            const container = document.getElementById('dynamicCustomCategories');
+            container.innerHTML = '';
+            if (window.customBlocksData.length === 0) return;
+
+            let customCategoriesObj = {};
+            window.customBlocksData.forEach(cb => {
+                if (!customCategoriesObj[cb.category]) customCategoriesObj[cb.category] = [];
+                customCategoriesObj[cb.category].push(cb);
+            });
+
+            let html = '<div class="nav-label">ส่วนเสริม (Extensions)</div>';
+            for (let cat in customCategoriesObj) {
+                html += `<button class="nav-btn" onclick="loadCategory('custom_${cat}', this)">
+                            <div class="nav-btn-icon"><i class="fa-solid fa-puzzle-piece"></i></div>
+                            <span>${cat}</span>
+                         </button>`;
+            }
+            container.innerHTML = html;
+        }
+
+        function reloadCustomBlocks() {
+            window.customBlocksData.forEach(cb => {
+                Blockly.Blocks[`custom_${cb.id}`] = {
+                    init: function () {
+                        this.appendDummyInput().appendField(cb.name);
+                        cb.args.forEach(arg => { this.appendValueInput(arg.name).appendField(`${arg.type} ${arg.name}`); });
+                        this.setInputsInline(true);
+                        this.setPreviousStatement(true, null);
+                        this.setColour(230);
+                    }
+                };
+                window.codeGenerator.forBlock[`custom_${cb.id}`] = function (block) {
+                    let argsCode = cb.args.map(arg => window.codeGenerator.valueToCode(block, arg.name, window.codeGenerator.ORDER_ATOMIC) || arg.defaultVal || '0');
+                    return `  ${cb.name}(${argsCode.join(', ')});\n`;
+                };
+            });
+            renderCustomCategories();
+            if (window.currentCategoryId && window.currentCategoryId.startsWith('custom_')) {
+                let activeBtn = document.querySelector(`.nav-btn[onclick*="'${window.currentCategoryId}'"]`);
+                if (activeBtn) loadCategory(window.currentCategoryId, activeBtn);
+            }
+        }
+
+        // ----------------------------------------------------
+        // Library Manager
+        // ----------------------------------------------------
+        async function openLibManager() {
+            let allLibs = [];
+            try {
+                const [libsRes, userLibsRes] = await Promise.all([fetch('/list_pio_libs'), fetch('/list_user_libs')]);
+                const libsData = libsRes.ok ? await libsRes.json() : { libs: [] };
+                const userLibsData = userLibsRes.ok ? await userLibsRes.json() : { libs: [] };
+                allLibs = [...new Set([...(libsData.libs || []), ...(userLibsData.libs || [])])];
+            } catch (err) { console.error("Library fetch failed", err); }
+
+            let installedHtml = "";
+            if (allLibs.length > 0) {
+                installedHtml = allLibs.map(l => `
+                <div class="custom-dialog-list-item">
+                    <span style="font-family:var(--font-code); font-size:12px;"><i class="fa-solid fa-box text-muted"></i> ${l}</span>
+                    <button class="btn-icon" style="color:var(--danger-color); background:transparent; border:none; cursor:pointer;" onclick="deleteLibrary('${l}')"><i class="fa-solid fa-trash"></i></button>
+                </div>`).join('');
+            } else { installedHtml = "<p style='text-align:center; color:var(--text-muted); font-size:13px;'>ไม่มีไลบรารีติดตั้งอยู่</p>"; }
+
+            Swal.fire({
+                title: 'Library Manager',
+                html: `
+                <div style="text-align:left; font-size:13px; margin-top: 10px;">
+                    <div class="custom-dialog-header"><i class="fa-solid fa-cloud-arrow-down"></i> ติดตั้งออนไลน์</div>
+                    <div style="display:flex; gap:8px; margin-bottom:20px;">
+                        <input type="text" id="libSearchName" class="swal2-input" placeholder="ค้นหาไลบรารี..." style="margin:0; flex:1;">
+                        <button class="btn primary" onclick="searchLib()" style="border-radius:var(--radius-md); padding:0 20px; font-weight:700;">ค้นหา</button>
+                    </div>
+                    
+                    <div class="custom-dialog-header"><i class="fa-solid fa-file-zipper"></i> อัปโหลดจากไฟล์</div>
+                    <button class="btn" style="width:100%; border:1px dashed var(--border-light); justify-content:center; margin-bottom:20px;" onclick="document.getElementById('zipIn').click()">เลือกไฟล์ .ZIP</button>
+                    
+                    <div class="custom-dialog-header"><i class="fa-solid fa-boxes-stacked"></i> ที่ติดตั้งแล้ว</div>
+                    <div style="max-height: 180px; overflow-y: auto;">
+                        ${installedHtml}
+                    </div>
+                </div>`,
+                showConfirmButton: false, showCloseButton: true, width: '450px'
+            });
+        }
+
+        async function searchLib() {
+            let query = document.getElementById('libSearchName').value;
+            if (!query) return;
+            Swal.fire({ title: 'กำลังค้นหา...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            try {
+                let res = await fetch('/search_lib', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
+                let data = await res.json();
+                if (data.success) {
+                    let resultsHtml = data.results.map(lib => {
+                        const safeName = escapeHtml(lib.name || ''); const safeDesc = escapeHtml(lib.description || '');
+                        const safeAuthor = escapeHtml(lib.author || ''); const safeVersion = escapeHtml(lib.version || '');
+                        return `
+                    <div style="border:1px solid var(--border-light); padding:12px; margin-bottom:8px; border-radius:var(--radius-sm); background:var(--bg-base);">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <strong style="color:var(--text-main); font-size:14px;">${safeName}</strong>
+                            <span style="color:var(--text-muted); font-size:11px; background:var(--bg-solid); padding:2px 6px; border-radius:4px;">v${safeVersion}</span>
+                        </div>
+                        <p style="margin:6px 0; font-size:12px; color:var(--text-muted);">${safeDesc}</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                            <span style="font-size:11px; color:var(--text-light);"><i class="fa-solid fa-user"></i> ${safeAuthor}</span>
+                            <button class="btn primary" style="padding:4px 12px; font-size:11px; border-radius:var(--radius-sm);" onclick="installSpecificLib('${safeName.replace(/'/g, "\\'")}')">ติดตั้ง</button>
+                        </div>
+                    </div>`;
+                    }).join('');
+                    if (!resultsHtml) resultsHtml = '<p style="text-align:center; color:var(--danger-color); font-size:13px;">ไม่พบผลลัพธ์</p>';
+                    Swal.fire({ title: 'ผลการค้นหา', html: `<div style="max-height:400px; overflow-y:auto; text-align:left;">${resultsHtml}</div>`, width: '500px', showConfirmButton: false, showCloseButton: true });
+                } else { Swal.fire('เกิดข้อผิดพลาด', data.details, 'error'); }
+            } catch (e) { Swal.fire('เกิดข้อผิดพลาด', 'ติดต่อเซิร์ฟเวอร์ไม่ได้', 'error'); }
+        }
+
+        async function installSpecificLib(libName) {
+            Swal.fire({ title: 'กำลังติดตั้ง...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            try {
+                let res = await fetch('/install_lib', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ libName }) });
+                let data = await res.json();
+                if (data.success) Swal.fire('สำเร็จ!', 'ติดตั้งเรียบร้อย!', 'success').then(() => openLibManager());
+                else Swal.fire('ล้มเหลว', data.details, 'error');
+            } catch (e) { Swal.fire('ข้อผิดพลาด', 'ติดต่อเซิร์ฟเวอร์ไม่ได้', 'error'); }
+        }
+
+        async function deleteLibrary(libName) {
+            const { isConfirmed } = await Swal.fire({
+                title: 'ยืนยันการลบ',
+                text: `คุณต้องการลบไลบรารี "${libName}" ใช่หรือไม่?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ลบเลย',
+                cancelButtonText: 'ยกเลิก',
+                reverseButtons: true
+            });
+
+            if (!isConfirmed) return;
+
+            Swal.fire({ title: 'กำลังลบ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            try {
+                let res = await fetch(`/delete_pio_lib`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ libName }) });
+                let data = await res.json();
+                if (data.success) Swal.fire({ title: 'สำเร็จ!', icon: 'success', timer: 1000, timerProgressBar: true, showConfirmButton: false }).then(() => openLibManager());
+                else Swal.fire('ล้มเหลว', data.details, 'error');
+            } catch (e) { Swal.fire('ข้อผิดพลาด', 'ติดต่อเซิร์ฟเวอร์ไม่ได้', 'error'); }
+        }
+
+        function uploadZipLibrary(e) {
+            let file = e.target.files[0]; if (!file) return;
+            Swal.fire({ title: 'กำลังประมวลผล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            let formData = new FormData();
+            formData.append('zip', file);
+            formData.append('libName', file.name.replace('.zip', ''));
+
+            fetch('/upload_zip_lib', { 
+                method: 'POST', 
+                body: formData 
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) Swal.fire('สำเร็จ!', 'ติดตั้งไลบรารี .ZIP เรียบร้อย!', 'success').then(() => openLibManager());
+                else Swal.fire('ล้มเหลว', data.error || data.details, 'error');
+            })
+            .catch(e => { Swal.fire('ข้อผิดพลาด', 'ติดต่อเซิร์ฟเวอร์ไม่ได้', 'error'); });
+            
+            e.target.value = ''; // Reset
+        }
+
+        // ----------------------------------------------------
+        // Custom Block Maker
+        // ----------------------------------------------------
+        function openCustomBlockManager() {
+            let listHtml = window.customBlocksData.map(cb => `
+            <div class="custom-dialog-list-item">
+                <span style="font-weight:600; font-size:13px; color:var(--text-main);">${cb.name} <span style='font-size:11px; font-weight:400; color:var(--text-muted);'>(${cb.category})</span></span>
+                <div style="display:flex; gap:4px;">
+                    <button class="btn" style="padding:4px; font-size:11px; border:none;" onclick="editCustomBlock('${cb.id}')"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn" style="padding:4px; font-size:11px; border:none; color:var(--danger-color);" onclick="deleteCustomBlock('${cb.id}')"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>`).join('');
+
+            let btnText = window.editingBlockId ? "บันทึก" : "สร้างบล็อก";
+
+            Swal.fire({
+                title: 'Custom Blocks',
+                html: `
+                <div style="text-align:left; font-size:13px;">
+                    <div style="max-height:160px; overflow-y:auto; margin-bottom:16px;">
+                        ${listHtml || '<p style="text-align:center; color:var(--text-muted); font-size:12px; padding: 10px;">ยังไม่มีบล็อกเสริม</p>'}
+                    </div>
+                    <div style="background:var(--bg-base); border-radius:var(--radius-sm); padding:16px; border:1px solid var(--border-light);">
+                        <div class="custom-dialog-header" style="margin-bottom:8px;">โค้ด C++ (รูปแบบ void)</div>
+                        
+                        <div style="display:flex; gap:8px; margin-bottom:12px;">
+                            <input type="text" id="cbCategory" class="swal2-input" placeholder="หมวดหมู่..." style="margin:0; flex:1;">
+                        </div>
+                        
+                        <textarea id="cbCode" class="swal2-textarea" placeholder="void myFunction(int speed) { ... }" style="width:100%; font-family:var(--font-code); margin:0;"></textarea>
+                        
+                        <div style="display:flex; gap:8px; margin-top:12px;">
+                            <button id="btnSaveCustom" class="btn primary" style="flex:1; border-radius:4px; font-size:12px; padding:6px;" onclick="parseAndAddCustomBlock()">${btnText}</button>
+                            <button class="btn" style="border-radius:4px; font-size:12px; padding:6px;" onclick="downloadCustomBlocks()"><i class="fa-solid fa-download"></i></button>
+                            <button class="btn" style="border-radius:4px; font-size:12px; padding:6px;" onclick="document.getElementById('customBlockIn').click()"><i class="fa-solid fa-upload"></i></button>
+                        </div>
+                    </div>
+                </div>`,
+                width: '500px', showConfirmButton: false, showCloseButton: true,
+                didClose: () => { window.editingBlockId = null; }
+            });
+        }
+
+        function editCustomBlock(id) {
+            let cb = window.customBlocksData.find(b => b.id === id);
+            if (cb) {
+                document.getElementById('cbCategory').value = cb.category;
+                document.getElementById('cbCode').value = cb.code;
+                window.editingBlockId = id;
+                document.getElementById('btnSaveCustom').innerText = "บันทึก";
+            }
+        }
+
+        async function parseAndAddCustomBlock() {
+            let code = document.getElementById('cbCode').value.trim();
+            let category = document.getElementById('cbCategory').value.trim() || "My Blocks";
+            try { validateCustomBlockCode(code); } catch (error) { return Swal.fire("Security Error", error.message, "error"); }
+
+            let match = code.match(/void\s+([a-zA-Z0-9_]+)\s*\(([^)]*)\)\s*\{([\s\S]*)\}/);
+            if (!match) return Swal.fire("รูปแบบผิดพลาด", "โค้ดต้องเป็นฟังก์ชัน void (...) { ... }", "error");
+
+            let name = match[1]; let argsRaw = match[2]; let args = [];
+
+            let existingIndex = window.customBlocksData.findIndex(cb => cb.name === name);
+            if (existingIndex > -1 && window.editingBlockId === null) {
+                const { isConfirmed } = await Swal.fire({ title: 'ชื่อซ้ำ', text: `เขียนทับ ${name}?`, showCancelButton: true, confirmButtonText: 'เขียนทับ' });
+                if (!isConfirmed) return;
+                window.editingBlockId = window.customBlocksData[existingIndex].id;
+            }
+
+            if (argsRaw.trim() !== "") {
+                let argParts = argsRaw.split(','); let htmlInputs = '';
+                argParts.forEach((part, index) => {
+                    let words = part.trim().split(/\s+/); let argName = words.pop(); let argType = words.join(' ');
+                    if (!validateArgType(argType)) throw new Error(`Invalid arg: ${argType}`);
+                    let existVal = 0;
+                    if (window.editingBlockId) { let cb = window.customBlocksData.find(b => b.id === window.editingBlockId); if (cb && cb.args && cb.args[index]) existVal = cb.args[index].defaultVal || 0; }
+                    htmlInputs += `<div style="text-align:left; margin-bottom:12px;"><label style="font-size:13px; font-weight:600; color:var(--text-main); margin-bottom:4px; display:block;">${escapeHtml(argName)}</label><input type="text" id="argDef_${index}" class="swal2-input" value="${escapeHtml(String(existVal))}" style="margin:0; width:100%;"></div>`;
+                    args.push({ name: argName, type: argType, defaultVal: existVal });
+                });
+                if (args.length > 0) {
+                    const { isConfirmed } = await Swal.fire({
+                        title: 'ตั้งค่าเริ่มต้น', html: htmlInputs, confirmButtonText: 'บันทึก', showCancelButton: true,
+                        preConfirm: () => { args.forEach((arg, index) => { arg.defaultVal = document.getElementById(`argDef_${index}`).value || 0; }); }
+                    });
+                    if (!isConfirmed) return;
+                }
+            }
+
+            if (window.editingBlockId) {
+                let idx = window.customBlocksData.findIndex(cb => cb.id === window.editingBlockId);
+                if (idx > -1) window.customBlocksData[idx] = { id: window.editingBlockId, name, category, args, code };
+                window.editingBlockId = null;
+            } else { window.customBlocksData.push({ id: Date.now().toString(), name, category, args, code }); }
+
+            reloadCustomBlocks();
+            let currentXml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
+            workspace.clear();
+            Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(currentXml), workspace);
+            openCustomBlockManager();
+        }
+
+        async function deleteCustomBlock(id) {
+            let cb = window.customBlocksData.find(b => b.id === id);
+            const { isConfirmed } = await Swal.fire({
+                title: 'ยืนยันการลบ',
+                text: `คุณต้องการลบบล็อก "${cb ? cb.name : id}" ใช่หรือไม่?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ลบเลย',
+                cancelButtonText: 'ยกเลิก',
+                reverseButtons: true
+            });
+
+            if (!isConfirmed) return;
+
+            let blocks = workspace.getAllBlocks(false);
+            blocks.forEach(b => { if (b.type === 'custom_' + id) b.dispose(true); });
+            window.customBlocksData = window.customBlocksData.filter(cb => cb.id !== id);
+            reloadCustomBlocks(); openCustomBlockManager();
+        }
+
+        function downloadCustomBlocks() {
+            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(window.customBlocksData)]));
+            a.download = 'MyCustomBlocks.json'; a.click();
+        }
+
+        function importCustomBlocks(e) {
+            let file = e.target.files[0]; if (!file) return;
+            let reader = new FileReader();
+            reader.onload = function (event) {
+                try {
+                    let imported = JSON.parse(event.target.result);
+                    let html = '<div style="text-align:left; max-height:200px; overflow-y:auto;">';
+                    imported.forEach((cb, i) => {
+                        html += `<label style="display:flex; align-items:center; gap:8px; margin-bottom:6px; font-size:13px; cursor:pointer;"><input type="checkbox" id="import_cb_${i}" checked> <span>${cb.name} <span style="color:var(--text-muted); font-size:11px;">(${cb.category})</span></span></label>`;
+                    });
+                    html += '</div>';
+
+                    Swal.fire({
+                        title: 'นำเข้าบล็อก', html: html, width: '400px', showCancelButton: true, confirmButtonText: 'นำเข้า',
+                        preConfirm: () => {
+                            let selected = []; imported.forEach((cb, i) => { if (document.getElementById(`import_cb_${i}`).checked) selected.push(cb); }); return selected;
+                        }
+                    }).then((res) => {
+                        if (res.isConfirmed && res.value.length > 0) {
+                            res.value.forEach(importedCb => {
+                                let idx = window.customBlocksData.findIndex(exist => exist.name === importedCb.name);
+                                if (idx > -1) window.customBlocksData[idx] = importedCb; else window.customBlocksData.push(importedCb);
+                            });
+                            reloadCustomBlocks(); openCustomBlockManager();
+                        }
+                    });
+                } catch (e) { Swal.fire('ข้อผิดพลาด', 'ไฟล์ไม่ถูกต้อง', 'error'); }
+            };
+            reader.readAsText(file); e.target.value = '';
+        }
+
+        // ----------------------------------------------------
+        // SRC Code Manager
+        // ----------------------------------------------------
+        window.srcFilesList = [];
+        window.currentSrcFile = "";
+        window.srcAceEditor = null;
+        window.srcSessions = {}; // Cache sessions for each file (persists until refresh)
+
+        async function openSrcManager() {
+            let res = await fetch('/list_src_files'); let data = await res.json();
+            if (!data.success || data.files.length === 0) return Swal.fire('แจ้งเตือน', 'ไม่พบไฟล์', 'info');
+            window.srcFilesList = data.files.filter(f => !f.startsWith('.') && !f.startsWith('_'));
+            if (window.srcFilesList.length === 0) return Swal.fire('แจ้งเตือน', 'ไม่มีไฟล์ที่สามารถแก้ไขได้', 'info');
+
+            // Clean up sessions for files that no longer exist
+            Object.keys(window.srcSessions).forEach(key => {
+                if (!window.srcFilesList.includes(key)) delete window.srcSessions[key];
+            });
+
+            loadSrcFile(window.srcFilesList[0]);
+        }
+
+        async function loadSrcFile(filename) {
+            window.currentSrcFile = filename;
+
+            // Prepare Tab UI
+            let tabsHtml = window.srcFilesList.map(f => `
+                <button class="btn ${f === filename ? 'active' : ''}" 
+                        style="border-radius:0; border:none; 
+                        background: ${f === filename ? 'var(--bg-solid)' : 'transparent'};
+                        border-bottom: 2px solid ${f === filename ? 'var(--primary-color)' : 'transparent'}; 
+                        border-right: 1px solid var(--border-light);
+                        color: ${f === filename ? 'var(--primary-color)' : 'var(--text-muted)'};
+                        font-weight: ${f === filename ? '600' : '400'};
+                        font-size:12px; padding:10px 20px; transition: var(--transition-all);
+                        display: flex; align-items: center; gap: 8px; min-width: 120px; justify-content: center;" 
+                        onclick="loadSrcFile('${f}')">
+                    <i class="fa-solid fa-file-code" style="font-size: 14px; opacity: ${f === filename ? '1' : '0.6'};"></i>
+                    ${f}
+                </button>
+            `).join('');
+
+            // If session for this file doesn't exist, fetch and create it
+            if (!window.srcSessions[filename]) {
+                let res = await fetch('/read_src_file/' + encodeURIComponent(filename));
+                let data = await res.json();
+                const session = ace.createEditSession(data.content || "", "ace/mode/c_cpp");
+                session.setUndoManager(new ace.UndoManager());
+                window.srcSessions[filename] = session;
+
+                // Track original content for the "Unsaved" check (session.getValue() will change)
+                session.originalContent = data.content || "";
+            }
+
+            if (window.srcManagerSwal) {
+                window.srcAceEditor.setSession(window.srcSessions[filename]);
+                // Update tabs inside the existing Swal
+                const tabsContainer = document.querySelector('.src-tabs-container');
+                if (tabsContainer) tabsContainer.innerHTML = tabsHtml;
+                return;
+            }
+
+            window.srcManagerSwal = Swal.fire({
+                title: 'Source Code Editor',
+                html: `
+                <div style="display:flex; flex-direction:column; height: 75vh; text-align:left; position:relative;">
+                    <div style="display:flex; align-items:center; background:var(--bg-panel); border-bottom:1px solid var(--border-light); flex-shrink:0;">
+                        <div class="src-tabs-container" style="display:flex; overflow-x:auto; flex:1;">${tabsHtml}</div>
+                        <div style="display:flex; gap:4px; padding:0 12px; border-left:1px solid var(--border-light); align-items:center; height:38px; background:var(--bg-panel);">
+                            <button class="btn" style="padding:4px 8px; font-size:11px; border-radius:4px;" onclick="srcUndo()" title="ย้อนกลับ (Undo)">
+                                <i class="fa-solid fa-rotate-left"></i>
+                            </button>
+                            <button class="btn" style="padding:4px 8px; font-size:11px; border-radius:4px;" onclick="srcRedo()" title="ทำซ้ำ (Redo)">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                            <div class="divider" style="height:14px; margin:0 4px; opacity:0.5;"></div>
+                            <button class="btn primary" style="padding:4px 12px; font-size:11px; font-weight:700; border-radius:4px;" onclick="saveSrcFile()">
+                                <i class="fa-solid fa-floppy-disk"></i> บันทึก
+                            </button>
+                        </div>
+                    </div>
+                    <div id="srcSearchWidget" style="position:absolute; top:58px; right:20px; z-index:100; background:var(--bg-panel); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid var(--border-light); border-radius:8px; box-shadow:var(--shadow-float); padding:8px; display:none; flex-direction:column; gap:6px; min-width:300px; transition:var(--transition-all);">
+                        <div style="display:flex; gap:6px; align-items:center;">
+                            <button class="btn" style="padding:4px;" onclick="toggleSrcReplace()" id="srcReplaceToggle" title="เปิด/ปิด การแทนที่"><i class="fa-solid fa-chevron-right"></i></button>
+                            <div style="position:relative; flex:1; display:flex; align-items:center;">
+                                <input type="text" id="srcFind" placeholder="ค้นหา..." oninput="srcFindText(null)" onkeyup="if(event.key==='Enter') srcFindNext()" style="background:var(--bg-solid); color:var(--text-main); border:1px solid var(--border-light); padding:4px 34px 4px 8px; border-radius:4px; font-size:12px; outline:none; width:100%;">
+                                <span id="srcMatchCount" style="position:absolute; right:8px; font-size:10px; color:var(--text-light);">0/0</span>
+                            </div>
+                            <div style="display:flex; gap:2px;">
+                                <button class="btn" style="padding:4px 6px; font-size:10px;" onclick="srcFindPrev()" title="ย้อนกลับ"><i class="fa-solid fa-arrow-up"></i></button>
+                                <button class="btn" style="padding:4px 6px; font-size:10px;" onclick="srcFindNext()" title="ถัดไป"><i class="fa-solid fa-arrow-down"></i></button>
+                            </div>
+                            <button class="btn" style="padding:4px 6px; font-size:10px;" onclick="document.getElementById('srcSearchWidget').style.display='none'" title="ปิด"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                        <div id="srcReplaceRow" style="display:none; gap:6px; align-items:center;">
+                            <div style="width:22px;"></div>
+                            <input type="text" id="srcReplace" placeholder="แทนที่ด้วย..." style="background:var(--bg-solid); color:var(--text-main); border:1px solid var(--border-light); padding:4px 8px; border-radius:4px; font-size:12px; outline:none; flex:1;">
+                            <div style="display:flex; gap:2px;">
+                                <button class="btn" style="padding:4px 6px; font-size:10px;" onclick="srcReplace()" title="แทนที่"><i class="fa-solid fa-check"></i></button>
+                                <button class="btn" style="padding:4px 6px; font-size:10px;" onclick="srcReplaceAll()" title="แทนที่ทั้งหมด"><i class="fa-solid fa-list-check"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="srcEditorAce" style="flex:1; width:100%;"></div>
+                </div>`,
+                width: '95%', showConfirmButton: false, showCloseButton: true, padding: '0',
+                didOpen: () => {
+                    window.srcAceEditor = ace.edit("srcEditorAce");
+                    window.srcAceEditor.setTheme(document.body.classList.contains('dark-mode') ? "ace/theme/github_dark" : "ace/theme/github");
+                    window.srcAceEditor.setSession(window.srcSessions[filename]);
+                    window.srcAceEditor.setOptions({ fontSize: "13px", showPrintMargin: false, fontFamily: "var(--font-code)" });
+                    window.srcAceEditor.container.style.background = "transparent";
+
+
+                    const handleSrcShortcuts = (e) => {
+                        if (e.ctrlKey && (e.key.toLowerCase() === 'f' || e.key.toLowerCase() === 'h')) {
+                            e.preventDefault();
+                            const widget = document.getElementById('srcSearchWidget');
+                            const findInput = document.getElementById('srcFind');
+                            const replaceInput = document.getElementById('srcReplace');
+                            const replaceRow = document.getElementById('srcReplaceRow');
+                            const toggle = document.getElementById('srcReplaceToggle');
+                            widget.style.display = 'flex';
+                            if (e.key.toLowerCase() === 'h') {
+                                if (replaceRow.style.display === 'none') {
+                                    replaceRow.style.display = 'flex';
+                                    toggle.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
+                                }
+                                replaceInput.focus();
+                            } else { findInput.focus(); }
+                        }
+                    };
+                    window.addEventListener('keydown', handleSrcShortcuts, true);
+                    window.currentSrcShortcuts = handleSrcShortcuts;
+
+                    window.srcAceEditor.commands.addCommand({
+                        name: 'find', bindKey: { win: 'Ctrl-F', mac: 'Command-F' },
+                        exec: () => { handleSrcShortcuts({ ctrlKey: true, key: 'f', preventDefault: () => { } }); }
+                    });
+                    window.srcAceEditor.commands.addCommand({
+                        name: 'replace', bindKey: { win: 'Ctrl-H', mac: 'Command-H' },
+                        exec: () => { handleSrcShortcuts({ ctrlKey: true, key: 'h', preventDefault: () => { } }); }
+                    });
+                },
+                preConfirm: () => {
+                    // Check all sessions for unsaved changes
+                    let hasUnsaved = false;
+                    for (const filename in window.srcSessions) {
+                        const session = window.srcSessions[filename];
+                        if (session.getValue() !== (session.originalContent || "")) {
+                            hasUnsaved = true; break;
+                        }
+                    }
+
+                    if (hasUnsaved) {
+                        return Swal.fire({
+                            title: 'ยังไม่ได้บันทึก!',
+                            text: 'คุณมีบางไฟล์ที่แก้ไขแล้วยังไม่ได้บันทึก ต้องการปิดโดยไม่บันทึกใช่หรือไม่?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'ปิดเลย (ทิ้งข้อมูล)',
+                            cancelButtonText: 'กลับไปบันทึก'
+                        }).then(res => res.isConfirmed);
+                    }
+                    return true;
+                },
+                willClose: () => {
+                    window.srcManagerSwal = null;
+                    if (window.currentSrcShortcuts) {
+                        window.removeEventListener('keydown', window.currentSrcShortcuts);
+                        window.currentSrcShortcuts = null;
+                    }
+                }
+            });
+        }
+
+        function toggleSrcReplace() {
+            const row = document.getElementById('srcReplaceRow');
+            const toggle = document.getElementById('srcReplaceToggle');
+            if (row.style.display === 'none') {
+                row.style.display = 'flex';
+                toggle.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
+            } else {
+                row.style.display = 'none';
+                toggle.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+            }
+        }
+
+        function updateSearchCount() {
+            if (!window.srcAceEditor) return;
+            const findStr = document.getElementById('srcFind').value;
+            const countEl = document.getElementById('srcMatchCount');
+            if (!findStr) { countEl.innerText = '0 / 0'; return; }
+            const Search = ace.require("ace/search").Search;
+            const search = new Search();
+            search.setOptions({ needle: findStr, caseSensitive: false, wrap: true });
+            const allRanges = search.findAll(window.srcAceEditor.session);
+            let currentIndex = 0;
+            const currentSel = window.srcAceEditor.getSelectionRange();
+            for (let i = 0; i < allRanges.length; i++) {
+                if (allRanges[i].start.row === currentSel.start.row && allRanges[i].start.column === currentSel.start.column) {
+                    currentIndex = i + 1;
+                    break;
+                }
+            }
+            countEl.innerText = `${currentIndex || (allRanges.length > 0 ? 1 : 0)} / ${allRanges.length}`;
+        }
+
+        function srcFindText(e) {
+            const query = document.getElementById('srcFind').value;
+            if (!query) { window.srcAceEditor.find(''); document.getElementById('srcMatchCount').innerText = '0 / 0'; return; }
+            window.srcAceEditor.find(query, { backwards: false, wrap: true, caseSensitive: false });
+            updateSearchCount();
+        }
+
+        function srcFindNext() { const query = document.getElementById('srcFind').value; if (!query) return; window.srcAceEditor.findNext(); updateSearchCount(); }
+        function srcFindPrev() { const query = document.getElementById('srcFind').value; if (!query) return; window.srcAceEditor.findPrevious(); updateSearchCount(); }
+        function srcReplace() { const findStr = document.getElementById('srcFind').value; const replaceStr = document.getElementById('srcReplace').value; if (!findStr) return; window.srcAceEditor.replace(replaceStr); updateSearchCount(); }
+        function srcReplaceAll() { const findStr = document.getElementById('srcFind').value; const replaceStr = document.getElementById('srcReplace').value; if (!findStr) return; window.srcAceEditor.replaceAll(replaceStr); updateSearchCount(); }
+
+        function srcUndo() { if (window.srcAceEditor) window.srcAceEditor.undo(); }
+        function srcRedo() { if (window.srcAceEditor) window.srcAceEditor.redo(); }
+
+        async function saveSrcFile() {
+            const session = window.srcAceEditor.getSession();
+            let content = session.getValue();
+            Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            let res = await fetch('/save_src_file', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: window.currentSrcFile, content }) });
+            if (res.ok) {
+                session.originalContent = content;
+                Swal.fire({ title: 'สำเร็จ!', icon: 'success', timer: 1000, timerProgressBar: true, showConfirmButton: false });
+                showStatusToast("บันทึกไฟล์สำเร็จ: " + window.currentSrcFile);
+            }
+        }
+
+
+        // ----------------------------------------------------
+        // Blockly Definitions
+        // ----------------------------------------------------
+        Blockly.Blocks['arduino_setup'] = { init: function () { this.appendDummyInput().appendField("⚙️ Setup"); this.appendStatementInput("SETUP_CODE").setCheck(null); this.setColour(210); this.setDeletable(false); this.contextMenu = false; } };
+        Blockly.Blocks['arduino_loop'] = { init: function () { this.appendDummyInput().appendField("🔄 Loop"); this.appendStatementInput("LOOP_CODE").setCheck(null); this.setColour(120); this.setDeletable(false); this.contextMenu = false; } };
+        Blockly.Blocks['config_servo1'] = { init: function () { this.appendDummyInput().appendField("Servo 1 Degree =").appendField(new Blockly.FieldNumber(110), "DEG1"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(230); this.setDeletable(false); this.setMovable(false); } };
+        Blockly.Blocks['config_servo2'] = { init: function () { this.appendDummyInput().appendField("Servo 2 Degree =").appendField(new Blockly.FieldNumber(45), "DEG2"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(230); this.setDeletable(false); this.setMovable(false); } };
+        Blockly.Blocks['config_calibrate'] = { init: function () { this.appendDummyInput().appendField("Calibrate EEPROM =").appendField(new Blockly.FieldDropdown([["ON", "1"], ["OFF", "0"]]), "VAL"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(230); this.setDeletable(false); this.setMovable(false); } };
+        Blockly.Blocks['config_turn_pid'] = { init: function () { this.appendDummyInput().appendField("PID Turn (Err").appendField(new Blockly.FieldNumber(1), "ERR").appendField("Min").appendField(new Blockly.FieldNumber(15), "MIN").appendField("Max").appendField(new Blockly.FieldNumber(60), "MAX").appendField("KP").appendField(new Blockly.FieldNumber(1.3), "KP").appendField("KD").appendField(new Blockly.FieldNumber(0.5), "KD").appendField(")"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(230); } };
+        Blockly.Blocks['wait_sw1'] = { init: function () { this.appendDummyInput().appendField("Wait SW1"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(290); } };
+
+        Blockly.Blocks['move_fline'] = { init: function () { this.appendDummyInput().appendField("Follow Line Speed").appendField(new Blockly.FieldNumber(50), "SPEED").appendField("Pin").appendField(new Blockly.FieldNumber(0), "SENSOR"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(260); } };
+        Blockly.Blocks['move_notline'] = { init: function () { this.appendDummyInput().appendField("Forward Notline Speed").appendField(new Blockly.FieldNumber(50), "SPEED").appendField("Time(ms)").appendField(new Blockly.FieldNumber(1000), "DUR"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(260); } };
+        Blockly.Blocks['move_fline_pass'] = { init: function () { this.appendDummyInput().appendField("Follow Line Bypass Speed").appendField(new Blockly.FieldNumber(100), "SPEED").appendField("Count").appendField(new Blockly.FieldNumber(1), "COUNT").appendField("Pin").appendField(new Blockly.FieldNumber(0), "SENSOR"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(260); } };
+        Blockly.Blocks['turn_left'] = { init: function () { this.appendDummyInput().appendField("Turn Left Speed").appendField(new Blockly.FieldNumber(40), "SPEED"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(260); } };
+        Blockly.Blocks['turn_left_stop'] = { init: function () { this.appendDummyInput().appendField("Turn Left Stop"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(260); } };
+        Blockly.Blocks['turn_left_st'] = { init: function () { this.appendDummyInput().appendField("Turn Left ST Speed").appendField(new Blockly.FieldNumber(40), "SPEED").appendField("Time(ms)").appendField(new Blockly.FieldNumber(500), "DUR"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(260); } };
+        Blockly.Blocks['turn_right'] = { init: function () { this.appendDummyInput().appendField("Turn Right Speed").appendField(new Blockly.FieldNumber(40), "SPEED"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(260); } };
+        Blockly.Blocks['turn_right_stop'] = { init: function () { this.appendDummyInput().appendField("Turn Right Stop"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(260); } };
+        Blockly.Blocks['turn_right_st'] = { init: function () { this.appendDummyInput().appendField("Turn Right ST Speed").appendField(new Blockly.FieldNumber(40), "SPEED").appendField("Time(ms)").appendField(new Blockly.FieldNumber(500), "DUR"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(260); } };
+
+        Blockly.Blocks['check_line'] = { init: function () { this.appendDummyInput().appendField("Check Line"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(290); } };
+        Blockly.Blocks['servo_run'] = { init: function () { this.appendDummyInput().appendField("Servo CH").appendField(new Blockly.FieldNumber(1), "CH").appendField("Degree").appendField(new Blockly.FieldNumber(90), "ANGLE"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(290); } };
+        Blockly.Blocks['delay_custom'] = { init: function () { this.appendDummyInput().appendField("Delay(ms)").appendField(new Blockly.FieldNumber(1000), "MS"); this.setPreviousStatement(true, null); this.setNextStatement(true, null); this.setColour(290); } };
+
+        window.codeGenerator.forBlock['procedures_defnoreturn'] = function (block) { var funcName = window.codeGenerator.nameDB_.getName(block.getFieldValue('NAME'), Blockly.PROCEDURE_CATEGORY_NAME); var branch = window.codeGenerator.statementToCode(block, 'STACK'); return `void ${funcName}() {\n${branch}}\n`; };
+        window.codeGenerator.forBlock['procedures_callnoreturn'] = function (block) { var funcName = window.codeGenerator.nameDB_.getName(block.getFieldValue('NAME'), Blockly.PROCEDURE_CATEGORY_NAME); return `  ${funcName}();\n`; };
+        window.codeGenerator.forBlock['arduino_setup'] = function (block) { const statements = window.codeGenerator.statementToCode(block, 'SETUP_CODE'); return `//---SETUP_START---\n${statements}//---SETUP_END---\n`; };
+        window.codeGenerator.forBlock['arduino_loop'] = function (block) { const statements = window.codeGenerator.statementToCode(block, 'LOOP_CODE'); return `//---LOOP_START---\n${statements}//---LOOP_END---\n`; };
+        window.codeGenerator.forBlock['config_servo1'] = function (block) { return `  degree_servo1 = ${block.getFieldValue('DEG1')};\n`; };
+        window.codeGenerator.forBlock['config_servo2'] = function (block) { return `  degree_servo2 = ${block.getFieldValue('DEG2')};\n`; };
+        window.codeGenerator.forBlock['config_calibrate'] = function (block) { return `  Calibrate_EEPROM = ${block.getFieldValue('VAL')};\n`; };
+        window.codeGenerator.forBlock['config_turn_pid'] = function (block) { const err = block.getFieldValue('ERR'), min = block.getFieldValue('MIN'), max = block.getFieldValue('MAX'), kp = block.getFieldValue('KP'), kd = block.getFieldValue('KD'); return `  set_data_for_turnDirection(${err}, ${min}, ${max}, ${kp}, ${kd});\n`; };
+        window.codeGenerator.forBlock['wait_sw1'] = function (block) { return `  wait_SW1();\n`; };
+        window.codeGenerator.forBlock['move_fline'] = function (block) { return `  Fline(${block.getFieldValue('SPEED')}, ${block.getFieldValue('SENSOR')});\n`; };
+        window.codeGenerator.forBlock['move_notline'] = function (block) { return `  Follow_Notline(${block.getFieldValue('SPEED')}, ${block.getFieldValue('DUR')});\n`; };
+        window.codeGenerator.forBlock['move_fline_pass'] = function (block) { return `  Fline_by_pass(${block.getFieldValue('SPEED')}, ${block.getFieldValue('COUNT')}, ${block.getFieldValue('SENSOR')});\n`; };
+        window.codeGenerator.forBlock['turn_left'] = function (block) { return `  turnLeft(${block.getFieldValue('SPEED')});\n`; };
+        window.codeGenerator.forBlock['turn_left_stop'] = function (block) { return `  turnLeft_by_stop();\n`; };
+        window.codeGenerator.forBlock['turn_left_st'] = function (block) { return `  turnLeft_by_ST(${block.getFieldValue('SPEED')}, ${block.getFieldValue('DUR')});\n`; };
+        window.codeGenerator.forBlock['turn_right'] = function (block) { return `  turnRight(${block.getFieldValue('SPEED')});\n`; };
+        window.codeGenerator.forBlock['turn_right_stop'] = function (block) { return `  turnRight_by_stop();\n`; };
+        window.codeGenerator.forBlock['turn_right_st'] = function (block) { return `  turnRight_by_ST(${block.getFieldValue('SPEED')}, ${block.getFieldValue('DUR')});\n`; };
+        window.codeGenerator.forBlock['check_line'] = function (block) { return `  checkLine();\n`; };
+        window.codeGenerator.forBlock['servo_run'] = function (block) { return `  servoRun(${block.getFieldValue('CH')}, ${block.getFieldValue('ANGLE')});\n`; };
+        window.codeGenerator.forBlock['delay_custom'] = function (block) { return `  delay(${block.getFieldValue('MS')});\n`; };
+
+        // ----------------------------------------------------
+        // UI Interaction & Resizing
+        // ----------------------------------------------------
+        const container = document.getElementById('container'), leftPanel = document.getElementById('leftPanel'), rightPanel = document.getElementById('rightPanel');
+        const resizerV = document.getElementById('resizerV'), resizerH = document.getElementById('resizerH');
+        const codeBox = document.getElementById('codeBox'), serialBox = document.getElementById('serialBox'), overlay = document.getElementById('resizerOverlay');
+
+        resizerV.addEventListener('mousedown', (e) => {
+            e.preventDefault(); document.body.style.cursor = 'col-resize'; overlay.style.display = 'block'; overlay.style.cursor = 'col-resize'; resizerV.classList.add('active');
+            document.addEventListener('mousemove', resizeV); document.addEventListener('mouseup', stopResizeV);
+        });
+        function resizeV(e) {
+            let containerRect = container.getBoundingClientRect(); let newLeftWidth = e.clientX - containerRect.left;
+            if (newLeftWidth > 250 && newLeftWidth < containerRect.width - 250) {
+                leftPanel.style.flex = "none"; leftPanel.style.width = newLeftWidth + 'px'; rightPanel.style.flex = "1";
+                Blockly.svgResize(workspace); if (editor) editor.resize();
+            }
+        }
+        function stopResizeV() {
+            document.body.style.cursor = ''; overlay.style.display = 'none'; resizerV.classList.remove('active');
+            document.removeEventListener('mousemove', resizeV); document.removeEventListener('mouseup', stopResizeV);
+            Blockly.svgResize(workspace); if (editor) editor.resize();
+        }
+
+        resizerH.addEventListener('mousedown', (e) => {
+            e.preventDefault(); document.body.style.cursor = 'row-resize'; overlay.style.display = 'block'; overlay.style.cursor = 'row-resize'; resizerH.classList.add('active');
+            document.addEventListener('mousemove', resizeH); document.addEventListener('mouseup', stopResizeH);
+        });
+        function resizeH(e) {
+            let rightRect = rightPanel.getBoundingClientRect(); let newCodeHeight = e.clientY - rightRect.top;
+            if (newCodeHeight > 100 && newCodeHeight < rightRect.height - 100) {
+                codeBox.style.flex = "none"; codeBox.style.height = newCodeHeight + 'px'; serialBox.style.flex = "1";
+                if (editor) editor.resize();
+            }
+        }
+        function stopResizeH() {
+            document.body.style.cursor = ''; overlay.style.display = 'none'; resizerH.classList.remove('active');
+            document.removeEventListener('mousemove', resizeH); document.removeEventListener('mouseup', stopResizeH);
+            if (editor) editor.resize();
+        }
+
+        window.addEventListener('resize', () => { Blockly.svgResize(workspace); if (editor) editor.resize(); });
+
+        function updateBadge() {
+            const b = document.getElementById('projectNameDisplay');
+            b.innerHTML = window.currentProjectName ? `<i class="fa-solid fa-code-branch"></i> <span>${window.currentProjectName}</span>` : `<i class="fa-solid fa-code-branch"></i> <span>Untitled</span>`;
+            b.className = window.currentProjectName ? "project-tag tag-named" : "project-tag tag-empty";
+        }
+
+        function togglePanel(type) {
+            if (type === 'code') { window.isCodeOpen = !window.isCodeOpen; document.getElementById('btnToggleCode').classList.toggle('active', window.isCodeOpen); }
+            if (type === 'serial') { window.isSerialOpen = !window.isSerialOpen; document.getElementById('btnToggleSerial').classList.toggle('active', window.isSerialOpen); }
+
+            if (!window.isCodeOpen && !window.isSerialOpen) {
+                rightPanel.style.display = 'none'; resizerV.style.display = 'none'; leftPanel.style.flex = '1'; leftPanel.style.width = '100%';
+            } else {
+                rightPanel.style.display = 'flex'; resizerV.style.display = 'block';
+                if (leftPanel.style.width === '100%' || leftPanel.style.flex === '1') { leftPanel.style.flex = "none"; leftPanel.style.width = "60%"; rightPanel.style.flex = "1"; }
+            }
+
+            codeBox.style.display = window.isCodeOpen ? 'flex' : 'none';
+            serialBox.style.display = window.isSerialOpen ? 'flex' : 'none';
+            resizerH.style.display = (window.isCodeOpen && window.isSerialOpen) ? 'block' : 'none';
+
+            if (window.isCodeOpen && !window.isSerialOpen) { codeBox.style.flex = "1"; codeBox.style.height = "auto"; }
+            if (!window.isCodeOpen && window.isSerialOpen) { serialBox.style.flex = "1"; }
+            if (window.isCodeOpen && window.isSerialOpen) { codeBox.style.flex = "none"; codeBox.style.height = "50%"; serialBox.style.flex = "1"; }
+
+            setTimeout(() => { Blockly.svgResize(workspace); if (editor) editor.resize(); }, 100);
+        }
+
+        // ----------------------------------------------------
+        // 🛡️ Security & Utility Helpers
+        // ----------------------------------------------------
+        function sanitizeProjectName(name) {
+            return name.replace(/[^a-zA-Z0-9_\u0E00-\u0E7F-]/g, '').trim();
+        }
+
+        function showStatusToast(message, type = 'info') {
+            const statusText = document.getElementById('bottomStatusText');
+            if (statusText) {
+                statusText.innerHTML = `<i class="fa-solid fa-sync fa-spin" style="font-size:10px; opacity:0.7;"></i> ${message}`;
+                setTimeout(() => {
+                    statusText.innerHTML = `<i class="fa-solid fa-check" style="font-size:10px; color:var(--success-color);"></i> พร้อมใช้งาน`;
+                }, 2000);
+            }
+        }
+
+        // ----------------------------------------------------
+        // Blockly Setup
+        // ----------------------------------------------------
+        const workspace = Blockly.inject('blocklyDiv', {
+            toolbox: '<xml></xml>',
+            theme: Blockly.Theme.defineTheme('modernTheme', {
+                'base': Blockly.Themes.Classic,
+                'componentStyles': {
+                    'workspaceBackgroundColour': 'transparent',
+                    'flyoutBackgroundColour': 'var(--bg-solid)',
+                    'flyoutOpacity': 0.98,
+                    'scrollbarOpacity': 0.3
+                }
+            }),
+            zoom: { controls: true, wheel: true, startScale: 1.0, maxScale: 3, minScale: 0.3, scaleSpeed: 1.2, pinch: true },
+            move: { scrollbars: true, drag: true, wheel: true },
+            trashcan: true,
+            toolboxPosition: 'start',
+            horizontalLayout: false
+        });
+
+        // ☢️ NUCLEAR OVERRIDE: Center Setup & Loop on Zoom Reset
+        if (Blockly.ZoomControls) {
+            Blockly.ZoomControls.prototype.resetZoom_ = function (e) {
+                if (e) { e.preventDefault(); e.stopPropagation(); }
+                const ws = this.workspace_;
+                const setup = ws.getBlocksByType('arduino_setup')[0];
+                const loop = ws.getBlocksByType('arduino_loop')[0];
+
+                ws.setScale(1.0);
+
+                if (setup && loop) {
+                    const sXY = setup.getRelativeToSurfaceXY();
+                    const lXY = loop.getRelativeToSurfaceXY();
+                    const metrics = ws.getMetrics();
+
+                    // Center the midpoint between Setup and Loop
+                    const midX = (sXY.x + lXY.x) / 2;
+                    const midY = (sXY.y + lXY.y) / 2;
+
+                    const targetX = (metrics.viewWidth / 2) - midX;
+                    const targetY = (metrics.viewHeight / 2) - midY;
+                    ws.scroll(targetX, targetY);
+                } else if (setup) {
+                    ws.centerOnBlock(setup.id);
+                }
+            };
+        }
+
+        // Prevent clearing memory if user manually scrolls significantly? 
+        // No, stay simple for now: it's a "Peek" feature.
+
+        // DEFINITIVE FIX: Force unified view and FULL width expansion
+        const originalGetMetrics = workspace.getMetrics.bind(workspace);
+        workspace.getMetrics = function () {
+            const m = originalGetMetrics();
+            // Restore any width lost to toolbox/flyout allocations
+            m.viewWidth += m.toolboxWidth + m.flyoutWidth;
+            m.toolboxWidth = 0;
+            m.flyoutWidth = 0;
+            m.absoluteLeft = 0;
+            return m;
+        };
+
+        function generateAndPreviewCode() {
+            let rawCode = window.codeGenerator.workspaceToCode(workspace);
+            let varMatch = rawCode.match(/var\s+[^;]+;/g);
+            let customFuncsMatch = rawCode.match(/void\s+[a-zA-Z0-9_]+\s*\([^)]*\)\s*\{[\s\S]*?\n\}/g);
+            let setupMatch = rawCode.match(/\/\/---SETUP_START---\n([\s\S]*?)\/\/---SETUP_END---\n/);
+            let loopMatch = rawCode.match(/\/\/---LOOP_START---\n([\s\S]*?)\/\/---LOOP_END---\n/);
+
+            let setupCode = setupMatch ? setupMatch[1] : "";
+            let configLines = [];
+            let restSetupLines = [];
+            setupCode.split('\n').forEach(line => {
+                let trimmed = line.trim();
+                if (trimmed.startsWith('degree_servo1 =') || trimmed.startsWith('degree_servo2 =') || trimmed.startsWith('Calibrate_EEPROM =')) {
+                    configLines.push(line);
+                } else {
+                    restSetupLines.push(line);
+                }
+            });
+            let configCode = configLines.join('\n');
+            let restCode = restSetupLines.join('\n');
+
+            window.generatedUserCode = window.customBlocksData.map(cb => cb.code).join('\n\n');
+
+            const fullCodeTemplate = `#include <Arduino.h>
+#include "puppybot6.h"
+
+int selection_Encoder = 1;
+#include "PuppyBotIMU.h"
+#include "PuppyBotTurnPID.h"
+#include <EEPROM.h>
+
+// Variables
+${varMatch ? varMatch.join('\n').replace(/var/g, 'int') : ""}
+
+#define SENSOR_COUNT 7
+#define EEPROM_SIZE 512
+#define EEPROM_ADDR_BASE 0
+
+int L_1 = 700; int R_1 = 700;
+int L_0 = 200; int R_0 = 400;
+
+volatile bool req_reset = false;      
+volatile bool bt_start_flag = false;
+
+// Custom Functions
+${customFuncsMatch ? customFuncsMatch.join('\n\n') : ""}
+
+void setup() {
+  Serial.begin(115200);
+  delay(2000);
+  puppybot6_setup();
+  setupBT();
+  EEPROM.begin(EEPROM_SIZE);
+  ${configCode}
+  servoRun(1, degree_servo1);
+  servoRun(2, degree_servo2);
+  delay(2000);
+
+  setSensorPins((const int[]){0, 1, 2, 3, 4, 5, 6}, 7);
+
+  loadCalibrationFromEEPROM();
+  printCalibrationFromEEPROM();
+  delay(1000);
+  init_encoder(1);
+  ${restCode}
+}
+
+void loop() {
+  ${loopMatch ? loopMatch[1] : ""}
+}
+
+void setup1() {
+  delay(1000);
+  initIMU();
+  updateIMU_fine_offset_Yaw(200);
+  offset_yaw_loop1 = getOffsetYaw();
+  buzzer(500, 100); buzzer(2000, 100);
+}
+
+void loop1() {
+  if (req_reset) { rp2040.reboot(); }
+  yaw_loop1 = getYaw();
+  Con_yaw_loop1 = getContinuousYaw();
+  if (status_resetYaw == 1) { status_resetYaw = 0; resetContinuousYaw(); }
+}
+`;
+            window.originalBlocklyCode = fullCodeTemplate + "\n\n// ======== User.ino ========\n" + window.generatedUserCode;
+            if (!window.isManualEditing) {
+                window.generatedCppCode = fullCodeTemplate;
+                editor.setValue(window.originalBlocklyCode, -1);
+                formatMainCode();
+            }
+        }
+
+        let codeGenDebounceTimer;
+        workspace.addChangeListener((event) => {
+            if (event.isUiEvent) return;
+
+            if (event.type === Blockly.Events.BLOCK_CREATE) {
+                const block = workspace.getBlockById(event.blockId);
+                if (block && (block.type === 'arduino_setup' || block.type === 'arduino_loop')) {
+                    const allBlocks = workspace.getBlocksByType(block.type);
+                    if (allBlocks.length > 1) {
+                        block.dispose(true);
+                        Swal.fire({
+                            title: `
+                            <div style="display:flex; align-items:center; gap:18px; text-align:left; padding-left:10px;">
+                                <div style="font-size:38px; color:#eab308;"><i class="fa-solid fa-clone fa-bounce"></i></div>
+                                <span style="font-weight:800; font-size:24px; color:#eab308;">บล็อกนี้มีอยู่แล้ว!</span>
+                            </div>`,
+                            html: `
+                            <div style="text-align:left; padding: 0 0 10px 65px; margin-top:-10px;">
+                                <div style="font-size:15px; font-weight:600; color:var(--text-main); margin-bottom:6px;">
+                                    ไม่สามารถสร้างบล็อก <span style="color:var(--primary-color);">${block.type === 'arduino_setup' ? 'Setup' : 'Loop'}</span> เพิ่มได้
+                                </div>
+                                <div style="font-size:13px; color:var(--text-light); opacity:0.8; line-height:1.5;">
+                                    ระบบอนุญาตให้มีบล็อกหลักได้เพียง 1 บล็อกเท่านั้น โปรดจัดระเบียบโค้ดที่มีอยู่เดิมในพื้นที่ทำงานของคุณ
+                                </div>
+                            </div>`,
+                            confirmButtonText: 'รับทราบ',
+                            background: 'var(--bg-panel)',
+                            color: 'var(--text-main)',
+                            width: '450px'
+                        });
+                        return;
+                    }
+                }
+            }
+
+            window.hasUnsavedChanges = true;
+            if (typeof triggerAutoSave === 'function') triggerAutoSave();
+
+            // Debounce code generation to prevent UI lag
+            if (codeGenDebounceTimer) clearTimeout(codeGenDebounceTimer);
+            codeGenDebounceTimer = setTimeout(generateAndPreviewCode, 400);
+        });
+
+        // Click outside Flyout to close it
+        workspace.addChangeListener((event) => {
+            if (event.type === Blockly.Events.CLICK && !event.blockId) {
+                const flyout = workspace.getFlyout();
+                if (flyout && flyout.isVisible()) {
+                    flyout.hide();
+                    window.currentCategoryId = null;
+                    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+                }
+            }
+        });
+
+        loadAutoSavedProject();
+
+        const defaultWorkspaceXML = `<xml><block type="arduino_setup" deletable="false" x="50" y="50"><statement name="SETUP_CODE"><block type="config_servo1" deletable="false"><field name="DEG1">110</field><next><block type="config_servo2" deletable="false"><field name="DEG2">45</field><next><block type="config_calibrate" deletable="false"><field name="VAL">1</field><next><block type="wait_sw1"></block></next></block></next></block></next></block></statement></block><block type="arduino_loop" deletable="false" x="50" y="300"></block></xml>`;
+
+
+
+        async function newProject() {
+            let serverFiles = [];
+            try {
+                const res = await fetch('/files');
+                const data = await res.json();
+                serverFiles = data.files || [];
+            } catch (e) { }
+
+            const canCancel = !!window.currentProjectName || serverFiles.length > 0;
+            const isMandatory = !window.currentProjectName;
+
+            const { value: name, isDismissed } = await Swal.fire({
+                title: 'เริ่มโปรเจกต์ใหม่',
+                input: 'text',
+                inputPlaceholder: 'ชื่อโปรเจกต์ใหม่...',
+                inputValidator: (v) => {
+                    if (!v || v.trim() === '') return 'โปรดระบุชื่อโปรเจกต์';
+                    if (v.includes('.')) return 'ชื่อห้ามมีจุดพิเศษ (.)';
+                    if (serverFiles.includes(v + '.rp2350')) return 'ชื่อนี้มีอยู่แล้ว โปรดใช้ชื่ออื่น';
+                    return null;
+                },
+                allowOutsideClick: !isMandatory,
+                allowEscapeKey: !isMandatory,
+                showCancelButton: canCancel,
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonText: 'สร้าง'
+            });
+
+            if (isDismissed) return;
+
+            if (name) {
+                window.currentProjectName = name;
+                localStorage.setItem('rp_last_file', name + '.rp2350');
+                localStorage.setItem('rp_project_name', name);
+                updateBadge();
+                workspace.clear();
+                Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(defaultWorkspaceXML), workspace);
+                reloadCustomBlocks();
+                performAutoSave(); // Save immediately
+                await Swal.fire({ title: 'เริ่มโปรเจกต์ใหม่สำเร็จ!', icon: 'success', timer: 2000, timerProgressBar: true, showConfirmButton: false });
+            }
+        }
+
+        async function renameProject() {
+            if (!window.currentProjectName) return newProject();
+
+            let serverFiles = [];
+            try {
+                const res = await fetch('/files');
+                const data = await res.json();
+                serverFiles = data.files || [];
+            } catch (e) { }
+
+            const oldName = window.currentProjectName;
+            const { value: newName } = await Swal.fire({
+                title: 'เปลี่ยนชื่อโปรเจกต์',
+                input: 'text',
+                inputValue: oldName,
+                inputValidator: (v) => {
+                    if (!v || v.trim() === '') return 'โปรดระบุชื่อใหม่';
+                    if (v.includes('.')) return 'ชื่อห้ามมีจุดพิเศษ (.)';
+                    if (v !== oldName && serverFiles.includes(v + '.rp2350')) return 'ชื่อนี้มีอยู่แล้ว โปรดใช้ชื่ออื่น';
+                    return null;
+                },
+                showCancelButton: true,
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonText: 'เปลี่ยนชื่อ'
+            });
+
+            if (newName && newName !== oldName) {
+                try {
+                    const res = await fetch('/rename_file', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            oldName: oldName + '.rp2350',
+                            newName: newName + '.rp2350'
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        window.currentProjectName = newName;
+                        localStorage.setItem('rp_last_file', newName + '.rp2350');
+                        localStorage.setItem('rp_project_name', newName);
+                        updateBadge();
+                        await Swal.fire({ title: 'เปลี่ยนชื่อโปรเจกต์สำเร็จ!', icon: 'success', timer: 2000, timerProgressBar: true, showConfirmButton: false });
+                    } else {
+                        Swal.fire('ล้มเหลว', data.error || 'ไม่สามารถเปลี่ยนชื่อได้', 'error');
+                    }
+                } catch (e) {
+                    Swal.fire('ข้อผิดพลาด', 'ติดต่อเซิร์ฟเวอร์ไม่ได้', 'error');
+                }
+            }
+        }
+
+        window.onload = async () => {
+            const lastFile = localStorage.getItem('rp_last_file');
+            let loaded = false;
+
+            // Ensure Flyout is hidden on start
+            if (workspace.getFlyout()) workspace.getFlyout().hide();
+
+            if (lastFile) {
+                window.loadingLastFile = true;
+                loaded = await loadFile(lastFile);
+            }
+
+            if (!loaded) {
+                window.currentProjectName = "";
+                updateBadge();
+                workspace.clear();
+                Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(defaultWorkspaceXML), workspace);
+                reloadCustomBlocks();
+
+                // Decide between file manager or naming dialog
+                try {
+                    const res = await fetch('/files');
+                    const data = await res.json();
+                    if (data.files && data.files.length > 0) {
+                        openFileManager(true);
+                    } else {
+                        newProject();
+                    }
+                } catch (e) {
+                    newProject();
+                }
+            }
+
+            // Restore scroll position
+            const sx = localStorage.getItem('rp_scroll_x');
+            const sy = localStorage.getItem('rp_scroll_y');
+            if (sx !== null && sy !== null) {
+                workspace.scroll(parseFloat(sx), parseFloat(sy));
+            }
+
+            // Remove loading state for smooth entry
+            requestAnimationFrame(() => {
+                document.getElementById('container').classList.remove('is-loading');
+            });
+
+            // Removed initial category loading
+            // const firstButton = document.querySelector('.nav-btn');
+            // if(firstButton) loadCategory('setup', firstButton);
+            Blockly.svgResize(workspace);
+        };
+
+        // ----------------------------------------------------
+        // Consolidation point for logic (Cleaning up)
+        // ----------------------------------------------------
+
+        // Handled in consolidate section below
+
+        async function handleUpload() {
+            if (!window.currentProjectName) {
+                window.currentProjectName = "Project_" + Math.floor(Math.random() * 1000);
+                updateBadge();
+            }
+
+            const xml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
+            const filename = window.currentProjectName + '.rp2350';
+            await fetch('/save_file', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ filename: filename, xml: xml, customBlocks: window.customBlocksData }) });
+            localStorage.setItem('rp_last_file', filename);
+
+            let wasConnected = false;
+            if (window.port) { wasConnected = true; await disconnectSerial(); }
+
+            let uploadAbortController = new AbortController(); let isCancelled = false; let startTime = Date.now();
+
+            Swal.fire({
+                title: 'Building...', html: '<div style="text-align:center; font-size:14px;">กำลังประมวลผลโค้ดและส่งเข้าบอร์ด...</div>', showCancelButton: true, cancelButtonText: 'ยกเลิก', showConfirmButton: false, allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }
+            }).then(async (result) => {
+                if (result.dismiss === Swal.DismissReason.cancel) {
+                    isCancelled = true; uploadAbortController.abort();
+                    Swal.fire({ title: 'กำลังยกเลิก...', didOpen: () => Swal.showLoading() });
+                    try { await fetch('/cancel_upload', { method: 'POST' }); Swal.fire('ยกเลิกสำเร็จ!', '', 'info'); }
+                    catch (e) { Swal.fire('เกิดข้อผิดพลาด', '', 'error'); }
+                }
+            });
+
+            if (isCancelled) return;
+
+            try {
+                const res = await fetch('/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: window.generatedCppCode, userCode: window.generatedUserCode }), signal: uploadAbortController.signal });
+                if (isCancelled) return;
+                let responseData = {};
+                try { responseData = await res.json(); } catch (err) { responseData = { details: "เกิดข้อผิดพลาดในการดึงข้อมูลจาก Server" }; }
+
+                if (res.ok) {
+                    let timeSec = ((Date.now() - startTime) / 1000).toFixed(1);
+                    Swal.fire({
+                        title: 'อัปโหลดสำเร็จ!',
+                        html: `<span style="font-size:13px;">ใช้เวลา: <b>${timeSec}s</b></span><br><br><div style="font-size:12px;text-align:left;background:var(--bg-base);padding:10px;border-radius:6px;border:1px solid var(--border-light);font-family:var(--font-code);">${responseData.memory || '-'}</div>`,
+                        icon: 'success'
+                    });
+                    if (wasConnected) { setTimeout(attemptReconnect, 1000); }
+                } else if (res.status === 499) { /* Cancelled */ }
+                else {
+                    Swal.fire({
+                        title: 'การอัปโหลดล้มเหลว',
+                        html: `
+                        <div style="position:relative; margin-top:10px;">
+                            <button class="btn" onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText).then(() => { this.innerHTML = '<i class=\\'fa-solid fa-check\\'></i> คัดลอกแล้ว'; setTimeout(() => this.innerHTML = '<i class=\\'fa-solid fa-copy\\'></i> คัดลอก', 2000); })" 
+                                    style="position:absolute; top:10px; right:10px; z-index:10; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); font-size:11px; padding:4px 12px; color:rgba(255,255,255,0.6);">
+                                <i class="fa-solid fa-copy"></i> คัดลอก
+                            </button>
+                            <div style="text-align:left; font-size:14px; background:#0d1117; color:#f85149; padding:20px; border: 1px solid rgba(248, 81, 73, 0.3); border-radius:8px; font-family:var(--font-code); max-height:450px; overflow-y:auto; white-space:pre-wrap; line-height:1.5; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">${responseData.details || 'ไม่สามารถดึงข้อมูลรายละเอียดข้อผิดพลาดได้'}</div>
+                        </div>`,
+                        width: '800px', icon: 'error', confirmButtonText: 'รับทราบ'
+                    });
+                }
+            } catch (e) { if (e.name !== 'AbortError' && !isCancelled) { Swal.fire('ข้อผิดพลาด', 'ติดต่อเซิร์ฟเวอร์ไม่ได้', 'error'); } }
+        }
+
+        async function openFileManager(isMandatory = false) {
+            const res = await fetch('/files'), data = await res.json();
+
+            if (data.files.length === 0 && isMandatory) {
+                return newProject();
+            }
+
+            let html = `
+                <button class="btn-add-project" onclick="newProject()" title="เริ่มโปรเจกต์ใหม่"><i class="fa-solid fa-plus"></i></button>
+                <div style="text-align:left; font-size:14px; max-height:300px; overflow-y:auto; padding-top:10px;">
+            `;
+
+            // 🔍 Security: Filter internal and hidden files (starting with . or _)
+            const filteredFiles = data.files.filter(f => f.endsWith('.rp2350') && !f.startsWith('.') && !f.startsWith('_'));
+
+            filteredFiles.forEach(f => {
+                const baseName = f.replace('.rp2350', '');
+                html += `<div class="custom-dialog-list-item">
+                <span style="font-weight:500; font-family:var(--font-code);"><i class="fa-solid fa-file-invoice" style="color:var(--primary-color);"></i> ${baseName}</span>
+                <div style="display:flex; gap:4px;">
+                    <button class="btn" style="padding:4px 10px; font-size:12px;" onclick="loadFile('${f}')">เปิด</button> `;
+
+                if (!isMandatory) {
+                    html += `
+                        <button class="btn" style="padding:4px 10px; font-size:12px;" onclick="renameFile('${f}')"><i class="fa-solid fa-pen"></i></button> 
+                        <button class="btn" style="padding:4px 10px; font-size:12px; color:var(--danger-color);" onclick="deleteFile('${f}')"><i class="fa-solid fa-trash"></i></button>`;
+                }
+
+                html += `</div></div>`;
+            });
+            html += '</div>';
+
+            Swal.fire({
+                title: isMandatory ? 'เลือกโปรเจกต์ใหม่' : 'แฟ้มผลงาน',
+                html: html,
+                showConfirmButton: false,
+                showCancelButton: !isMandatory,
+                cancelButtonText: 'ยกเลิก',
+                allowOutsideClick: !isMandatory,
+                allowEscapeKey: !isMandatory,
+                width: '450px'
+            });
+        }
+
+        async function loadLocalFile(e) {
+            const f = e.target.files[0]; if (!f) return;
+            let baseName = f.name.replace('.rp2350', '');
+            const res = await fetch('/files'); const data = await res.json();
+            if (data.files.includes(f.name)) {
+                const { value: newName, isConfirmed } = await Swal.fire({
+                    title: 'ชื่อไฟล์ซ้ำ', input: 'text', inputValue: baseName + '_copy', showCancelButton: true, confirmButtonText: 'เปลี่ยนชื่อ', cancelButtonText: 'เขียนทับ'
+                });
+                if (isConfirmed && newName) baseName = newName;
+            }
+
+            const r = new FileReader();
+            r.onload = async (ev) => {
+                workspace.clear();
+                try {
+                    let parsedData = JSON.parse(ev.target.result);
+                    window.customBlocksData = parsedData.customBlocks || []; reloadCustomBlocks();
+                    Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(parsedData.xml), workspace);
+                    window.currentProjectName = baseName; updateBadge();
+                    await fetch('/save_file', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ filename: window.currentProjectName + '.rp2350', xml: parsedData.xml, customBlocks: window.customBlocksData }) });
+                    await Swal.fire({ title: 'นำเข้าไฟล์สำเร็จ!', icon: 'success', timer: 2000, timerProgressBar: true, showConfirmButton: false });
+                    await new Promise(r => setTimeout(r, 300)); // Visual breather
+                } catch (err) { Swal.fire('เกิดข้อผิดพลาด', 'ไฟล์ไม่รองรับ', 'error'); }
+            };
+            r.readAsText(f); e.target.value = '';
+        }
+
+        async function loadFile(n) {
+            try {
+                const res = await fetch(`/load_file/${encodeURIComponent(n)}`);
+                if (!res.ok) throw new Error("File not found");
+                const data = await res.json();
+
+                workspace.clear();
+                window.customBlocksData = data.customBlocks || []; reloadCustomBlocks();
+
+                try {
+                    Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(data.xml), workspace);
+                } catch (xmlError) {
+                    console.error("Corrupted project XML", xmlError);
+                    Swal.fire('ไฟล์เสียหาย', 'ไม่สามารถอ่านโครงสร้างบล็อกได้ ข้อมูลอาจสูญหายบางส่วน', 'warning');
+                    Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(defaultWorkspaceXML), workspace);
+                }
+
+                window.currentProjectName = n.replace('.rp2350', '');
+                localStorage.setItem('rp_last_file', n);
+                updateBadge(); Swal.close();
+                showStatusToast("โหลดโปรเจกต์สำเร็จ");
+                return true;
+            } catch (e) {
+                if (window.loadingLastFile) {
+                    localStorage.removeItem('rp_last_file');
+                    window.currentProjectName = "";
+                    updateBadge();
+                    newProject();
+                } else {
+                    Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถโหลดไฟล์ได้', 'error');
+                    Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(defaultWorkspaceXML), workspace);
+                }
+                return false;
+            } finally {
+                window.loadingLastFile = false;
+            }
+        }
+
+        async function renameFile(old) {
+            let serverFiles = [];
+            try {
+                const res = await fetch('/files');
+                const data = await res.json();
+                serverFiles = data.files || [];
+            } catch (e) { }
+
+            const { value: n } = await Swal.fire({
+                title: 'ตั้งชื่อใหม่',
+                input: 'text',
+                inputValue: old.replace('.rp2350', ''),
+                inputValidator: (v) => {
+                    if (!v || v.trim() === '') return 'โปรดระบุชื่อใหม่';
+                    if (v.includes('.')) return 'ชื่อห้ามมีจุดพิเศษ (.)';
+                    if (v !== old.replace('.rp2350', '') && serverFiles.includes(v + '.rp2350')) return 'ชื่อนี้มีอยู่แล้ว';
+                    return null;
+                }
+            });
+            if (n) {
+                await fetch('/rename_file', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ oldName: old, newName: n + '.rp2350' }) });
+                if (window.currentProjectName === old.replace('.rp2350', '')) {
+                    window.currentProjectName = n;
+                    localStorage.setItem('rp_last_file', n + '.rp2350');
+                    updateBadge();
+                    performAutoSave();
+                }
+                openFileManager();
+            }
+        }
+
+        async function deleteFile(n) {
+            const { isConfirmed } = await Swal.fire({
+                title: 'ยืนยันการลบโปรเจกต์',
+                text: `คุณต้องการลบโปรเจกต์ "${n.replace('.rp2350', '')}" ใช่หรือไม่?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ลบเลย',
+                cancelButtonText: 'ยกเลิก',
+                reverseButtons: true
+            });
+
+            if (isConfirmed) {
+                Swal.fire({ title: 'กำลังลบ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                try {
+                    const res = await fetch(`/delete_file/${encodeURIComponent(n)}`, { method: 'DELETE' });
+                    const data = await res.json();
+                    if (data.success) {
+                        await Swal.fire({ title: 'ลบไฟล์สำเร็จ!', icon: 'success', timer: 2000, timerProgressBar: true, showConfirmButton: false });
+                        await new Promise(r => setTimeout(r, 400)); // Visual breather before next dialog
+
+                        // Check if we need a reset (current file deleted or no files left)
+                        const fileRes = await fetch('/files');
+                        const fileData = await fileRes.json();
+                        const isCurrentDeleted = (n.replace('.rp2350', '') === window.currentProjectName);
+
+                        if (isCurrentDeleted || fileData.files.length === 0) {
+                            window.currentProjectName = "";
+                            localStorage.removeItem('rp_last_file');
+                            localStorage.removeItem('rp_project_name');
+                            updateBadge();
+                            workspace.clear();
+                            Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(defaultWorkspaceXML), workspace);
+                            reloadCustomBlocks();
+
+                            if (fileData.files.length > 0) {
+                                openFileManager(true); // Mandatory mode
+                            } else {
+                                newProject();
+                            }
+                        } else {
+                            openFileManager();
+                        }
+                    } else {
+                        Swal.fire('ล้มเหลว', data.error || 'ไม่สามารถลบไฟล์ได้', 'error');
+                    }
+                } catch (e) {
+                    Swal.fire('ข้อผิดพลาด', 'ติดต่อเซิร์ฟเวอร์ไม่ได้', 'error');
+                }
+            }
+        }
+
+        function downloadProject() {
+            if (!window.currentProjectName) return Swal.fire('แจ้งเตือน', 'ตั้งชื่อก่อนเซฟ', 'warning');
+            const xml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
+            const saveData = JSON.stringify({ xml: xml, customBlocks: window.customBlocksData });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([saveData]));
+            a.download = window.currentProjectName + '.rp2350'; a.click();
+        }
+
+        function importFile() { document.getElementById('fileIn').click(); }
+
+        // ----------------------------------------------------
+        // Serial Monitor
+        // ----------------------------------------------------
+        window.port = null; window.reader = null; window.keepReading = false; window.closedPromise = null; window.intentionalDisconnect = true;
+
+        navigator.serial.addEventListener("disconnect", (event) => {
+            if (window.port && event.target === window.port) {
+                window.intentionalDisconnect = false; disconnectSerialUI(); setTimeout(attemptReconnect, 1000);
+            }
+        });
+
+        async function attemptReconnect() {
+            if (window.intentionalDisconnect) return;
+            const ports = await navigator.serial.getPorts();
+            if (ports.length > 0) { try { window.port = ports[0]; await connectPort(); } catch (e) { setTimeout(attemptReconnect, 2000); } }
+            else { setTimeout(attemptReconnect, 2000); }
+        }
+
+        async function toggleSerial() {
+            if (window.port) { window.intentionalDisconnect = true; await disconnectSerial(); }
+            else { try { window.port = await navigator.serial.requestPort(); window.intentionalDisconnect = false; await connectPort(); } catch (e) { } }
+        }
+
+        async function connectPort() {
+            await window.port.open({ baudRate: 115200 });
+
+            // Update Top button
+            let btn = document.getElementById('btnSerial');
+            btn.innerHTML = "<i class='fa-solid fa-plug-circle-xmark'></i> Disconnect Serial";
+            btn.classList.add('danger'); btn.classList.remove('primary');
+
+            // Update Bottom Status bar
+            let statusBtn = document.getElementById('bottomSerialStatus');
+            let statusText = document.getElementById('bottomSerialText');
+            statusBtn.classList.remove('disconnected');
+            statusBtn.classList.add('connected');
+            statusText.innerText = "Connected (115200)";
+            statusBtn.querySelector('i').className = "fa-solid fa-plug-circle-check";
+
+            window.keepReading = true; readLoop();
+        }
+
+        async function readLoop() {
+            const decoder = new TextDecoderStream();
+            window.closedPromise = window.port.readable.pipeTo(decoder.writable);
+            window.reader = decoder.readable.getReader();
+            const logElement = document.getElementById('serialLog');
+
+            try {
+                while (window.keepReading) {
+                    const { value, done } = await window.reader.read();
+                    if (done) break;
+
+                    // Optimization: Use textContent append or text nodes for performance
+                    const span = document.createElement('span');
+                    span.textContent = value;
+                    logElement.appendChild(span);
+
+                    // Limit total log elements to prevent slow-down over time
+                    if (logElement.childNodes.length > 1000) {
+                        logElement.removeChild(logElement.firstChild);
+                    }
+
+                    if (window.autoScroll) logElement.scrollTop = logElement.scrollHeight;
+                }
+            } catch (e) { } finally { if (window.reader) window.reader.releaseLock(); }
+        }
+
+        function disconnectSerialUI() {
+            let btn = document.getElementById('btnSerial');
+            btn.innerHTML = "<i class='fa-solid fa-plug'></i> Connect Serial";
+            btn.classList.remove('danger'); btn.classList.add('primary');
+
+            // Update Bottom Status bar
+            let statusBtn = document.getElementById('bottomSerialStatus');
+            let statusText = document.getElementById('bottomSerialText');
+            statusBtn.classList.add('disconnected');
+            statusBtn.classList.remove('connected');
+            statusText.innerText = "No Port Connected";
+            statusBtn.querySelector('i').className = "fa-solid fa-circle-xmark";
+        }
+
+        async function disconnectSerial() {
+            window.keepReading = false; window.intentionalDisconnect = true;
+            if (window.reader) { try { await window.reader.cancel(); } catch (e) { } }
+            if (window.closedPromise) { try { await window.closedPromise.catch(() => { }); } catch (e) { } }
+            if (window.port) { try { await window.port.close(); } catch (e) { } window.port = null; }
+            disconnectSerialUI();
+        }
+
+        function toggleAutoScroll() {
+            window.autoScroll = !window.autoScroll;
+            const btn = document.getElementById('btnScroll');
+            if (window.autoScroll) { btn.classList.add('primary'); btn.innerHTML = '<i class="fa-solid fa-arrow-down"></i>'; }
+            else { btn.classList.remove('primary'); btn.innerHTML = '<i class="fa-solid fa-pause"></i>'; }
+        }
+        function clearSerial() { document.getElementById('serialLog').innerText = ""; }
+        async function sendSerial() {
+            if (!window.port) return;
+            const val = document.getElementById('serialIn').value + '\n';
+            const writer = window.port.writable.getWriter();
+            await writer.write(new TextEncoder().encode(val));
+            writer.releaseLock();
+            document.getElementById('serialIn').value = '';
+        }
+
+    </script>
+</body>
+
+</html>

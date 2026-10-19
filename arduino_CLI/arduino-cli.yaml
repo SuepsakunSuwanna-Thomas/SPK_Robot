@@ -1,0 +1,18 @@
+board_manager:
+    additional_urls:
+        - https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
+
+directories:
+    data: ./portable_tools/arduino_data
+    downloads: ./portable_tools/arduino_data/staging
+    user: ./libraries_User_Env
+
+library:
+    enable_unsafe_install: false
+
+sketch:
+    always_export_binaries: false
+
+logging:
+    level: info
+    format: text

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RP2350 Pro IDE - Modern Edition</title>
+    <link rel="icon" href="data:,">
+
+    <!-- Local Libraries -->
+    <link rel="stylesheet" href="libs/fontawesome/css/all.min.css">
+
+
+    <!-- Local CSS (Includes Fonts & Glassmorphism) -->
+    <link rel="stylesheet" href="css/style.css?v=3">
+
+    <!-- Blockly & Extensions (Local) -->
+    <script src="libs/blockly/blockly_compressed.js"></script>
+    <script src="libs/blockly/blocks_compressed.js"></script>
+    <script src="libs/blockly/javascript_compressed.js"></script>
+    <script src="libs/blockly/msg/en.js"></script>
+
+    <!-- SweetAlert2 (Local) -->
+    <script src="libs/swal2/sweetalert2.all.min.js"></script>
+
+    <!-- Ace Editor (Local) -->
+    <script src="libs/ace/ace.js"></script>
+    <script src="libs/ace/ext-beautify.js"></script>
+
+
+</head>
+
+<body>
+    <!-- 🎨 Modern Glassmorphism Header -->
+    <header class="app-header">
+        <div class="brand-area">
+            <div class="logo-title">
+                <div class="logo-icon"><i class="fa-solid fa-microchip"></i></div>
+                <span>RP2350 PRO IDE</span>
+            </div>
+            <div id="projectNameDisplay" class="project-tag tag-empty" onclick="renameProject()">
+                <i class="fa-solid fa-code-branch"></i>
+                <span>Untitled</span>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="segment-group">
+                <button class="btn btn-icon segment-btn" onclick="openBlockSearch()" data-tooltip="ค้นหาบล็อก (Ctrl+H)">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <button class="btn btn-icon segment-btn" onclick="togglePanel('code')" id="btnToggleCode"
+                    data-tooltip="หน้าต่าง C++"><i class="fa-solid fa-code"></i></button>
+                <button class="btn btn-icon segment-btn" onclick="togglePanel('serial')" id="btnToggleSerial"
+                    data-tooltip="หน้าต่าง Serial"><i class="fa-solid fa-terminal"></i></button>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Tools -->
+            <button class="btn btn-icon" onclick="jumpToSetup()" data-tooltip="กลับจุดเริ่มต้น (Setup)"><i
+                    class="fa-solid fa-house"></i></button>
+            <button class="btn btn-icon" onclick="cleanUpWorkspace()" data-tooltip="จัดระเบียบบล็อก"><i
+                    class="fa-solid fa-broom"></i></button>
+            <button class="btn btn-icon" onclick="openSrcManager()" data-tooltip="จัดการ Source Code"><i
+                    class="fa-solid fa-folder-tree"></i></button>
+            <button class="btn btn-icon" onclick="openLibManager()" data-tooltip="จัดการไลบรารี"><i
+                    class="fa-solid fa-book-bookmark"></i></button>
+            <button class="btn btn-icon" onclick="openCustomBlockManager()" data-tooltip="สร้างบล็อกเสริม"><i
+                    class="fa-solid fa-puzzle-piece"></i></button>
+
+            <div class="divider"></div>
+
+            <!-- Files -->
+            <button class="btn btn-icon" onclick="openFileManager()" data-tooltip="เปิดแฟ้มผลงาน"><i
+                    class="fa-solid fa-folder-open"></i></button>
+            <button class="btn btn-icon" onclick="downloadProject()" data-tooltip="บันทึกลงเครื่อง"><i
+                    class="fa-solid fa-download"></i></button>
+            <button class="btn btn-icon" onclick="importFile()" data-tooltip="นำเข้าไฟล์ .rp2350"><i
+                    class="fa-solid fa-upload"></i></button>
+
+            <div class="divider"></div>
+
+            <!-- Day/Night Toggle -->
+            <button class="btn btn-icon" onclick="toggleThemeMode()" id="btnThemeMode"
+                data-tooltip="สลับโหมด กลางวัน/กลางคืน">
+                <i class="fa-solid fa-sun" id="themeModeIcon"></i>
+            </button>
+
+            <div class="divider"></div>
+
+            <!-- Color Selector -->
+            <div class="color-selector-container" id="themeSelector">
+                <div class="theme-dropdown-trigger" onclick="toggleThemeDropdown()">
+                    <i class="fa-solid fa-palette"></i>
+                    <span id="currentThemeLabel">Blue Sky</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="theme-dropdown-menu">
+                    <div class="theme-option" onclick="changeThemeAccent('blue')" data-theme="blue">
+                        <div class="swatch-small blue"></div>
+                        <span>Blue Sky</span>
+                    </div>
+                    <div class="theme-option" onclick="changeThemeAccent('green')" data-theme="green">
+                        <div class="swatch-small green"></div>
+                        <span>Emerald Forest</span>
+                    </div>
+                    <div class="theme-option" onclick="changeThemeAccent('purple')" data-theme="purple">
+                        <div class="swatch-small purple"></div>
+                        <span>Midnight Purple</span>
+                    </div>
+                    <div class="theme-option" onclick="changeThemeAccent('orange')" data-theme="orange">
+                        <div class="swatch-small orange"></div>
+                        <span>Sunset Orange</span>
+                    </div>
+                    <div class="theme-option" onclick="changeThemeAccent('sakura')" data-theme="sakura">
+                        <div class="swatch-small sakura"></div>
+                        <span>Sakura Pink</span>
+                    </div>
+                    <div class="theme-option" onclick="changeThemeAccent('gold')" data-theme="gold">
+                        <div class="swatch-small gold"></div>
+                        <span>Premium Gold</span>
+                    </div>
+                    <div class="theme-option" onclick="changeThemeAccent('hacker')" data-theme="hacker">
+                        <div class="swatch-small hacker"></div>
+                        <span>Hacker Neon</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Upload -->
+            <button id="btnFlash" class="btn btn-flash" onclick="handleUpload()"><i class="fa-solid fa-bolt"></i>
+                Upload</button>
+        </div>
+    </header>
+
+    <!-- 🌟 Main Workspace -->
+    <main class="workspace-container is-loading" id="container">
+
+        <!-- แถบด้านซ้าย (Toolbox) -->
+        <div class="sidebar" id="leftPanel" style="width: 100%; flex: 1;">
+
+            <div id="customToolbox" class="toolbox-panel">
+                <div id="sidebarCategories">
+                    <div class="nav-label">หุ่นยนต์ (Robot)</div>
+                    <button class="nav-btn active" onclick="loadCategory('setup', this)">
+                        <div class="nav-btn-icon"><i class="fa-solid fa-sliders"></i></div>
+                        <span>ตั้งค่าหุ่นยนต์</span>
+                    </button>
+                    <button class="nav-btn" onclick="loadCategory('movement', this)">
+                        <div class="nav-btn-icon"><i class="fa-solid fa-car-side"></i></div>
+                        <span>เคลื่อนที่</span>
+                    </button>
+                    <button class="nav-btn" onclick="loadCategory('turn', this)">
+                        <div class="nav-btn-icon"><i class="fa-solid fa-rotate-left"></i></div>
+                        <span>เลี้ยวและหมุน</span>
+                    </button>
+                    <button class="nav-btn" onclick="loadCategory('action', this)">
+                        <div class="nav-btn-icon"><i class="fa-solid fa-robot"></i></div>
+                        <span>สั่งงานเซ็นเซอร์</span>
+                    </button>
+
+                    <div class="nav-label">โครงสร้าง (Logic)</div>
+                    <button class="nav-btn" onclick="loadCategory('logic', this)">
+                        <div class="nav-btn-icon"><i class="fa-solid fa-code-branch"></i></div>
+                        <span>เงื่อนไข (If-Else)</span>
+                    </button>
+                    <button class="nav-btn" onclick="loadCategory('loops', this)">
+                        <div class="nav-btn-icon"><i class="fa-solid fa-retweet"></i></div>
+                        <span>วนซ้ำ (Loops)</span>
+                    </button>
+                    <button class="nav-btn" onclick="loadCategory('math', this)">
+                        <div class="nav-btn-icon"><i class="fa-solid fa-calculator"></i></div>
+                        <span>คณิตศาสตร์</span>
+                    </button>
+
+                    <div class="nav-label">ข้อมูล (Data)</div>
+                    <button class="nav-btn" onclick="loadCategory('variables', this)">
+                        <div class="nav-btn-icon"><i class="fa-solid fa-box-archive"></i></div>
+                        <span>ตัวแปร</span>
+                    </button>
+                    <button class="nav-btn" onclick="loadCategory('functions', this)">
+                        <div class="nav-btn-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <span>ฟังก์ชัน</span>
+                    </button>
+
+                    <div id="dynamicCustomCategories"></div>
+                </div>
+            </div>
+
+            <div id="blocklyArea">
+                <div id="blocklyDiv"></div>
+                <!-- 🔍 Workspace Find Widget (VS Code Style) -->
+                <div id="workspaceFindWidget" class="workspace-find-widget" style="display:none;">
+                    <div class="find-container">
+                        <i class="fa-solid fa-magnifying-glass find-icon"></i>
+                        <input type="text" id="workspaceFindInput" placeholder="ค้นหาบล็อก..." autocomplete="off" oninput="handleWorkspaceFind()">
+                        <span id="workspaceFindCount">0/0</span>
+                        <div class="divider-v"></div>
+                        <button class="find-btn" onclick="moveFindSelection(-1)" title="ก่อนหน้า (Shift+Enter)"><i
+                                class="fa-solid fa-chevron-up"></i></button>
+                        <button class="find-btn" onclick="moveFindSelection(1)" title="ถัดไป (Enter)"><i
+                                class="fa-solid fa-chevron-down"></i></button>
+                        <button class="find-btn close" onclick="closeFindWidget()"><i
+                                class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <!-- 📋 Find Results Dropdown -->
+                    <div id="workspaceFindResults" class="find-results-dropdown" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="resizer-v" id="resizerV" style="display:none;"></div>
+
+        <!-- แถบด้านขวา (Code Editor & Terminal) -->
+        <div class="right-panel" id="rightPanel" style="display:none;">
+
+            <div class="code-box" id="codeBox" style="display:none;">
+                <div class="panel-header">
+                    <span class="panel-title"><i class="fa-solid fa-file-code"></i> main.ino</span>
+                    <div class="panel-actions">
+                        <button id="btnFormatCode" class="btn primary" style="display:none;"
+                            onclick="Editor.formatMainCode()"><i class="fa-solid fa-wand-magic-sparkles"></i>
+                            จัดโค้ด</button>
+                        <button id="btnViewCustomCode" class="btn" onclick="viewCustomCode()" style="display:none;">
+                            <i class="fa-solid fa-code"></i> ดูโค้ด Custom</button>
+                        <button id="btnEditCode" class="btn" onclick="enableManualEdit()"><i
+                                class="fa-solid fa-pen"></i> แก้ไขเอง</button>
+                        <button id="btnResetCode" class="btn danger" style="display:none;"
+                            onclick="resetManualEdit()"><i class="fa-solid fa-xmark"></i> เลิกแก้ไข</button>
+                    </div>
+                </div>
+                <div id="codePreview"></div>
+            </div>
+
+            <div class="resizer-h" id="resizerH"></div>
+
+            <div class="serial-box" id="serialBox" style="display:none;">
+                <div class="panel-header">
+                    <span class="panel-title"><i class="fa-solid fa-terminal"></i> Terminal</span>
+                    <div class="panel-actions">
+                        <button class="btn" id="btnScroll" onclick="toggleAutoScroll()" title="Auto Scroll"><i
+                                class="fa-solid fa-arrow-down"></i></button>
+                        <button class="btn" onclick="clearSerial()" title="Clear Screen"><i
+                                class="fa-solid fa-eraser"></i></button>
+                        <button class="btn primary" id="btnSerial" onclick="toggleSerial()"><i
+                                class="fa-solid fa-plug"></i> Connect Serial</button>
+                    </div>
+                </div>
+                <div id="serialLog"></div>
+                <div class="terminal-input-bar">
+                    <span class="terminal-prefix">❯</span>
+                    <input type="text" id="serialIn" placeholder="พิมพ์คำสั่งแล้วกด Enter..."
+                        onkeypress="if(event.key==='Enter') sendSerial()">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 🟢 Bottom Status Bar -->
+    <footer class="status-bar">
+        <div class="status-left">
+            <div class="status-item disconnected" id="bottomSerialStatus" onclick="toggleSerial()">
+                <i class="fa-solid fa-circle-xmark"></i>
+                <span id="bottomSerialText">No Port Connected</span>
+            </div>
+            <div class="status-item" style="cursor: default;">
+                <i class="fa-solid fa-check"></i>
+                <span>Blockly Ready</span>
+            </div>
+        </div>
+        <div class="status-right">
+            <span>RP2350 Pro IDE v1.2</span>
+        </div>
+    </footer>
+
+    <!-- Hidden Inputs -->
+    <input type="file" id="fileIn" style="display:none" accept=".rp2350" onchange="loadLocalFile(event)">
+    <input type="file" id="zipIn" style="display:none" accept=".zip" onchange="uploadZipLibrary(event)">
+    <input type="file" id="customBlockIn" style="display:none" accept=".json" onchange="importCustomBlocks(event)">
+
+    <!-- 🔍 Global Editor Find & Replace Widget (Moves dynamically) -->
+    <div id="editorFindWidget" class="editor-find-widget" style="display:none;">
+        <div class="editor-find-row">
+            <div class="replace-toggle" id="btnToggleReplace" onclick="EditorFind.toggleReplace()" title="Toggle Replace" style="width: 26px; flex-shrink: 0;">
+                <i class="fa-solid fa-angle-right"></i>
+            </div>
+            <div class="editor-find-input-group" style="width: 260px; flex: 0 0 260px;">
+                <input type="text" id="editorFindInput" placeholder="Find" autocomplete="off" oninput="EditorFind.handleSearch()">
+                <div class="editor-find-options" style="width: 95px; flex-shrink: 0; justify-content: flex-end;">
+                    <div class="find-opt-btn" id="optCase" onclick="EditorFind.toggleOption('matchCase')" title="Match Case (Aa)">Aa</div>
+                    <div class="find-opt-btn" id="optWord" onclick="EditorFind.toggleOption('wholeWord')" title="Match Whole Word (ab)"><u>ab</u></div>
+                    <div class="find-opt-btn" id="optRegex" onclick="EditorFind.toggleOption('isRegex')" title="Use Regular Expression (*)">.*</div>
+                    <div class="find-opt-btn" id="optSelection" onclick="EditorFind.toggleOption('findInSelection')" title="Find in Selection"><i class="fa-solid fa-object-group"></i></div>
+                </div>
+            </div>
+            <div class="editor-find-count" id="editorFindCount">No results</div>
+            <div class="editor-find-actions">
+                <button class="editor-find-btn" onclick="EditorFind.moveSelection(-1)" title="Previous Match (Shift+Enter)"><i class="fa-solid fa-arrow-up"></i></button>
+                <button class="editor-find-btn" onclick="EditorFind.moveSelection(1)" title="Next Match (Enter)"><i class="fa-solid fa-arrow-down"></i></button>
+                <div class="divider"></div>
+                <button class="editor-find-btn close-btn" onclick="EditorFind.close()" title="Close (Escape)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+        <div class="editor-replace-row" id="replaceRow" style="display:none;">
+            <div class="replace-spacer" style="width: 26px; flex-shrink: 0;"></div>
+            <div class="editor-find-input-group" style="width: 260px; flex: 0 0 260px;">
+                <input type="text" id="editorReplaceInput" placeholder="Replace" autocomplete="off">
+                <div class="editor-find-options" style="width: 95px; flex-shrink: 0; justify-content: flex-end;">
+                    <div class="find-opt-btn" id="optPreserveCase" onclick="EditorFind.toggleOption('preserveCase')" title="Preserve Case (AB)">AB</div>
+                </div>
+            </div>
+            <div class="editor-find-actions replace-actions">
+                <button class="editor-find-btn" onclick="EditorFind.replace()" title="Replace (Enter)" style="width:auto; padding:0 8px; font-size:11px; font-weight:600; letter-spacing:0.5px;">Replace</button>
+                <button class="editor-find-btn" onclick="EditorFind.replaceAll()" title="Replace All (Ctrl+Alt+Enter)" style="width:auto; padding:0 8px; font-size:11px; font-weight:600; letter-spacing:0.5px;">All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script Modules (Order is critical) -->
+    <script src="js/api_manager.js?v=49"></script>
+    <script src="js/generators.js?v=49"></script>
+    <script src="js/blockly_setup.js?v=49"></script>
+    <script src="js/ui_manager.js?v=49"></script>
+    <script src="js/editor_manager.js?v=49"></script>
+    <script src="js/main.js?v=49"></script>
+</body>
+
+</html>
